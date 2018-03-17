@@ -1,4 +1,4 @@
-FROM resin/raspberrypi-python:3.6
+FROM resin/raspberrypi-python:3.6-slim
 
 # RUN apt-get update && apt-get install -yq \
 #    alsa-utils libasound2-dev && \
@@ -7,11 +7,10 @@ FROM resin/raspberrypi-python:3.6
 WORKDIR /app
 
 COPY ./requirements.txt /tmp/requirements.txt
-RUN pip install -r /tmp/requirements.txt
+RUN pip --disable-pip-version-check --no-cache-dir install -r /tmp/requirements.txt
 
 COPY . ./
 
-# switch on systemd init system in container
 ENV INITSYSTEM on
 
 CMD ["python", "-m", "cocorico"]
