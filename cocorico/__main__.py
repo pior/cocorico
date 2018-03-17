@@ -1,22 +1,19 @@
 import time
 
-import RPIO
+import gpiozero
 
-GPIO_LED_1 = 22
-GPIO_LED_2 = 23
+
+LED1 = gpiozero.LED(22)
+LED1 = gpiozero.LED(23)
 
 
 def main():
-    RPIO.setup(GPIO_LED_1, RPIO.OUT, initial=RPIO.LOW)
-    RPIO.setup(GPIO_LED_2, RPIO.OUT, initial=RPIO.LOW)
+    LED1.toggle()
 
-    state = False
     while True:
-        state = not state
-
-        RPIO.output(GPIO_LED_1, state)
-        RPIO.output(GPIO_LED_2, not state)
-
+        LED1.toggle()
+        LED2.toggle()
         time.sleep(0.2)
+
 
 main()
