@@ -1,0 +1,17 @@
+FROM resin/%%RESIN_MACHINE_NAME%%-python
+
+# RUN apt-get update && apt-get install -yq \
+#    alsa-utils libasound2-dev && \
+#    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+COPY ./requirements.txt /tmp/requirements.txt
+RUN pip install -r /tmp/requirements.txt
+
+COPY . ./
+
+# switch on systemd init system in container
+ENV INITSYSTEM on
+
+CMD ["python", "-m", "cocorico"]
