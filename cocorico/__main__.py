@@ -8,11 +8,12 @@ LED2 = gpiozero.LED(23)
 
 
 def main():
-    LED1.toggle()
+    state = False
 
     while True:
-        LED1.toggle()
-        LED2.toggle()
+        state = not state
+        LED1.value = state
+        LED2.value = not state
         time.sleep(0.2)
 
 
