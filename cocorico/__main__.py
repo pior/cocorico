@@ -4,7 +4,7 @@ import gpiozero
 
 
 LED1 = gpiozero.LED(22)
-LED1 = gpiozero.LED(23)
+LED2 = gpiozero.LED(23)
 
 
 def main():
