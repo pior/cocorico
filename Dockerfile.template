@@ -1,4 +1,4 @@
-FROM resin/raspberrypi-python:3.6-slim
+FROM resin/raspberrypi-python:3.6
 
 # RUN apt-get update && apt-get install -yq \
 #    alsa-utils libasound2-dev && \
