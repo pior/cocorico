@@ -5,3 +5,6 @@ up:
 commands:
   run:
     run: GPIOZERO_PIN_FACTORY=mock python -m cocorico
+
+  push:
+    run: git add -u && git commit -m 'autopush' && git push resin
