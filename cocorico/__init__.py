@@ -5,5 +5,5 @@ log = logging.getLogger(__name__)
 
 log.info('Loading...')
 
-import gpiozero
-log.info('Module gpiozero loaded')
+# import gpiozero
+# log.info('Module gpiozero loaded')
