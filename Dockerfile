@@ -1,8 +1,9 @@
 FROM resin/raspberry-pi-python:3.6-slim
 
-# RUN apt-get update && apt-get install -yq \
-#    alsa-utils libasound2-dev && \
-#    apt-get clean && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -yq \
+    zlib1g-dev && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+#   alsa-utils libasound2-dev && \
 
 WORKDIR /app
 
