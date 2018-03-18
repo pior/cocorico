@@ -38,7 +38,7 @@ class Button:
                 log.info("%r: ignore bounce", self)
                 break
         else:
-            log.info("%r: calling %s(%s, %s)", self, self._callback)
+            log.info("%r: calling %s", self, self._callback)
             self._callback()
 
 
