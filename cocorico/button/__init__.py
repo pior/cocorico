@@ -18,11 +18,9 @@ class Button:
     - call function if 3 reads return active.
     """
 
-    def __init__(self, pin, callback, callback_args=None, callback_kwargs=None):
+    def __init__(self, pin, callback):
         self._pin = pin
         self._callback = callback
-        self._callback_args = callback_args
-        self._callback_kwargs = callback_kwargs
 
         GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
         GPIO.add_event_detect(pin, GPIO.FALLING, callback=self._gpio_callback, bouncetime=200)
@@ -40,8 +38,8 @@ class Button:
                 log.info("%r: ignore bounce", self)
                 break
         else:
-            log.info("%r: calling %s(%s, %s)", self, self._callback, self._callback_args, self._callback_kwargs)
-            self._callback(*self._callback_args, **self._callback_kwargs)
+            log.info("%r: calling %s(%s, %s)", self, self._callback)
+            self._callback()
 
 
     def __repr__(self):
