@@ -29,7 +29,7 @@ def color_to_lpd8806(color):
 class RGBLeds:
     def __init__(self, led=8):
         self._spi = hal.SpiDev()
-        self._spi.open(0, 0)
+        self._spi.open(1, 0)
         self._spi.max_speed_hz = 4_000_000
 
         self._led = led
