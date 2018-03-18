@@ -25,7 +25,7 @@ class Button:
         self._callback_kwargs = callback_kwargs
 
         GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-        GPIO.add_event_detect(4, GPIO.FALLING, callback=self._gpio_callback, bouncetime=200)
+        GPIO.add_event_detect(pin, GPIO.FALLING, callback=self._gpio_callback, bouncetime=200)
 
     def _is_active(self):
         return GPIO.input(self._pin) == GPIO.LOW
