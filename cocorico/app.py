@@ -19,9 +19,9 @@ class App():
         self.loop()
 
     def loop(self):
-        leds.RGBLeds().test(speed=16_000_000)
-        leds.RGBLeds().test(speed=4_000_000)
-        leds.RGBLeds().test(speed=1_000_000)
-        leds.RGBLeds().test(speed=400_000)
+        leds.RGBLeds(speed=16_000_000).test()
+        leds.RGBLeds(speed=4_000_000).test()
+        leds.RGBLeds(speed=1_000_000).test()
+        leds.RGBLeds(speed=400_000).test()
 
         leds.blinking_led_loop()
