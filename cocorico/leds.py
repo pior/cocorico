@@ -31,7 +31,6 @@ class RGBLeds:
         self._spi = hal.SpiDev()
         self._spi.open(0, 0)
         self._spi.max_speed_hz = 4_000_000
-        self._spi.no_cs = True
 
         self._led = led
         self._pixel_buffer = [colors.Black] * led
