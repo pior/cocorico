@@ -6,11 +6,14 @@ from cocorico.hal.spi import SpiDev
 from cocorico.hal.gpio import GPIO
 
 
-def test(text):
-    GPIO.setmode(GPIO.BCM)
-    serial = luma_spi(spi=SpiDev(), gpio=GPIO, device=0, port=0)
-    device = ssd1306(serial)
+class Display:
 
-    with canvas(device) as draw:
-        draw.rectangle(device.bounding_box, outline="white", fill="black")
-        draw.text((30, 40), text, fill="white")
+    def __init__(self):
+        GPIO.setmode(GPIO.BCM)
+        serial = luma_spi(spi=SpiDev(), gpio=GPIO, device=0, port=0)
+        self._device = ssd1306(serial)
+
+    def announce(self, text):
+        with canvas(self._device) as draw:
+            draw.rectangle(self._device.bounding_box, outline="white", fill="black")
+            draw.text((30, 25), text, fill="white")
