@@ -9,7 +9,6 @@ from cocorico.hal.gpio import GPIO
 class Display:
 
     def __init__(self):
-        GPIO.setmode(GPIO.BCM)
         serial = luma_spi(spi=SpiDev(), gpio=GPIO, device=0, port=0)
         self._device = ssd1306(serial)
 
