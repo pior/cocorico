@@ -15,9 +15,8 @@ class App():
     def __init__(self):
         log.info('Initializing...')
         self.display = Display()
-        self.button1 = Button(pin=17, callback=self.btn1_callback)
-        self.button2 = Button(pin=27, callback=self.btn2_callback)
-        self.counter = 0
+        # self.btn_alarm = Button(pin=17, callback=self.btn_alarm_cb)
+        # self.btn_alarm_time = Button(pin=27, callback=self.btn_alarm_time_cb)
         log.info('Initialized.')
 
     def run(self):
@@ -29,17 +28,16 @@ class App():
     def loop(self):
             # RGBLeds().test()
             # leds.blinking_led_loop()
+            self.refresh_display()
             time.sleep(1)
 
-    def btn1_callback(self):
-        self.counter += 1
-        self.refresh_display()
+    # def btn_alarm_cb(self):
+    #     self.counter += 1
+    #     self.refresh_display()
 
-    def btn2_callback(self):
-        self.counter = max(0, self.counter - 1)
-        self.refresh_display()
+    # def btn_alarm_time_cb(self):
+    #     self.counter = max(0, self.counter - 1)
+    #     self.refresh_display()
 
     def refresh_display(self):
-        even = self.counter % 2 == 0
-        text = "%s  %s" % ('EVEN' if even else 'ODD ', self.counter)
-        self.display.announce(text)
+        self.display.clock()
