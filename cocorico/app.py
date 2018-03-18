@@ -3,14 +3,17 @@ import signal
 import typing
 import logging
 
-import gpiozero
-
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
+
+log.info('gpiozero is loading...')
+import gpiozero
+log.info('gpiozero loaded')
 
 
 class App():
     def __init__(self):
+        log.info('Application initializing...')
         self.led1 = gpiozero.LED(22)
         self.led2 = gpiozero.LED(23)
         log.info('Application initialized.')
