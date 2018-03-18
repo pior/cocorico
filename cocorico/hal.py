@@ -14,7 +14,10 @@ class MockSpiDev:
         log.info("SPI open port=%s device=%s", port, device)
 
     def xfer(self, data):
-        log.info("writing: %s", data)
+        log.info("%r: %s", self, data)
+
+    def __repr__(self):
+        return "%s(%s)" % (self.__class__, self.__dict__)
 
 
 if SpiDev is None:

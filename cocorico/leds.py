@@ -27,12 +27,11 @@ def color_to_lpd8806(color):
 
 
 class RGBLeds:
-    END_SEQUENCE = [0x00, 0x00, 0x00] # Some words with MSB cleared
-
-    def __init__(self, led=8, speed=1_000_000):
+    def __init__(self, led=8):
         self._spi = hal.SpiDev()
         self._spi.open(0, 0)
-        self._spi.max_speed_hz = speed
+        self._spi.max_speed_hz = 4_000_000
+        self._spi.no_cs = True
 
         self._led = led
         self._pixel_buffer = [colors.Black] * led
@@ -57,7 +56,6 @@ class RGBLeds:
 
     def test(self):
         for color in colors.wheel():
-            log.info('Color %s', color)
             self.set_all(color)
             self.refresh()
-            time.sleep(0.05)
+            time.sleep(0.02)
