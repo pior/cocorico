@@ -3,6 +3,7 @@ import logging
 
 # import gpiozero
 from . import hal
+from . import colors
 
 log = logging.getLogger(__name__)
 
@@ -21,8 +22,12 @@ log = logging.getLogger(__name__)
 #         time.sleep(0.2)
 
 
+def color_to_lpd8806(color):
+    return [(x >> 1)  | 0x80 for x in color.raw]
+
+
 class RGBLeds:
-    END_SEQUENCE = [0x00, 0x00, 0x00]
+    END_SEQUENCE = [0x00, 0x00, 0x00] # Some words with MSB cleared
 
     def __init__(self, led=8, speed=1_000_000):
         self._spi = hal.SpiDev()
@@ -30,33 +35,29 @@ class RGBLeds:
         self._spi.max_speed_hz = speed
 
         self._led = led
-        self._buffer = [0x00, 0x00, 0x00] * led
+        self._pixel_buffer = [colors.Black] * led
 
     def refresh(self):
-        self._spi.xfer(self._buffer + self.END_SEQUENCE)
+        data = [
+            byte
+            for pixel in self._pixel_buffer
+            for byte in color_to_lpd8806(pixel)
+        ]
+        data += [0x00] * 3  # Commit sequecnce: words with MSB cleared
+        self._spi.xfer(data)
 
-    def set_pixel(self, pixel, color):
-        if 0 <= pixel < self._led:
-            self._buffer[pixel * 3: (pixel + 1) * 3] = color
-        else:
-            log.info('Invalid pixel %s on %s strip', pixel, self._led)
+    # def set_pixel(self, pixel, color):
+    #     if 0 <= pixel < self._led:
+    #         self._pixel_buffer[pixel * 3: (pixel + 1) * 3] = color_to_lpd8806(color)
+    #     else:
+    #         log.info('Invalid pixel %s on %s strip', pixel, self._led)
 
     def set_all(self, color):
-        for pixel in range(self._led):
-            self.set_pixel(pixel, color)
+        self._pixel_buffer = [color] * self._led
 
     def test(self):
-        for color in [
-            (0x00, 0x00, 0x00),
-            (0x40, 0x40, 0x40),
-            (0x80, 0x80, 0x80),
-            (0xA0, 0xA0, 0xA0),
-            (0xFF, 0xFF, 0xFF),
-            (0xFF, 0x00, 0x00),
-            (0x00, 0xFF, 0x00),
-            (0x00, 0x00, 0xFF),
-        ]:
+        for color in colors.wheel():
             log.info('Color %s', color)
             self.set_all(color)
             self.refresh()
-            time.sleep(1)
+            time.sleep(0.05)
