@@ -1,0 +1,7 @@
+up:
+  - python: 3.6.4
+  # - pip: [requirements.txt]
+
+commands:
+  run:
+    run: GPIOZERO_PIN_FACTORY=mock python -m cocorico

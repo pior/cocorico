@@ -1,4 +1,4 @@
-FROM resin/%%RESIN_MACHINE_NAME%%-python:3.6-slim
+FROM resin/raspberrypi-python:3.6-slim
 
 # RUN apt-get update && apt-get install -yq \
 #    alsa-utils libasound2-dev && \
@@ -6,8 +6,8 @@ FROM resin/%%RESIN_MACHINE_NAME%%-python:3.6-slim
 
 WORKDIR /app
 
-COPY ./requirements.txt /tmp/requirements.txt
-RUN pip --disable-pip-version-check --no-cache-dir install -r /tmp/requirements.txt
+COPY ./requirements.txt ./requirements-target.txt /tmp/
+RUN pip --disable-pip-version-check --no-cache-dir install -r /tmp/requirements.txt -r /tmp/requirements-target.txt
 
 COPY . ./
 
