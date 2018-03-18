@@ -21,6 +21,7 @@ class App():
 
     def run(self):
         log.info('Running...')
+        self.refresh_display()
         while True:
             self.loop()
 
@@ -28,11 +29,13 @@ class App():
             # RGBLeds().test()
             # leds.blinking_led_loop()
 
-            text = str(int(self.counter))
-            self.display.announce(text)
-
-            self.counter += 1
             time.sleep(1)
 
     def btn_callback(self):
-        self.counter = 0
+        self.counter += 1
+        self.refresh_display()
+
+    def refresh_display(self):
+        even = self.counter % 2 == 0
+        text = "%s  %s" % ('EVEN' if even else 'ODD ', self.counter)
+        self.display.announce(text)
