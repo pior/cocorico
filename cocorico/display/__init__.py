@@ -7,6 +7,7 @@ from cocorico.hal.gpio import GPIO
 
 
 def test(text="Hello World"):
+    GPIO.setmode(GPIO.BCM)
     serial = luma_spi(spi=SpiDev(), gpio=GPIO, device=0, port=0)
     device = ssd1306(serial)
 
