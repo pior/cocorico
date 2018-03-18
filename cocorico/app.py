@@ -26,5 +26,5 @@ class App():
         # leds.blinking_led_loop()
 
         text = str(int(time.time() % 10000))
-        display.test()
+        display.test(text)
         time.sleep(1)
