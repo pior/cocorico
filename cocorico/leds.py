@@ -1,7 +1,10 @@
 import time
+import logging
 
 import gpiozero
 import spidev
+
+log = logging.getLogger(__name__)
 
 
 def blinking_led_loop():
@@ -19,12 +22,41 @@ def blinking_led_loop():
 
 
 class RGBLeds:
-    def __init__(self):
+    def __init__(self, speed=1_000_000):
         self._spi = spidev.SpiDev()
         self._spi.open(0, 0)
-        self._spi.max_speed_hz = 4_000_000
+        self._spi.max_speed_hz = speed
 
     def test(self):
-        buffer = [0x80, 0x80, 0x80] * 4
-        buffer += [0x00, 0x00, 0x00]  # "push" the bits and make sure no glitch color appear
+        for update_func in [self._update_1, self._update_2]:
+            log.info('With %s', update_func)
+
+            for data in [
+                [0x00, 0x00, 0x00],
+                [0x00, 0x00, 0x00] * 4,
+                [0x00, 0x00, 0x00] * 8,
+
+                [0x80, 0x80, 0x80],
+                [0x80, 0x80, 0x80] * 4,
+                [0x80, 0x80, 0x80] * 8,
+
+                [0xFF, 0xFF, 0xFF],
+                [0xFF, 0xFF, 0xFF] * 4,
+                [0xFF, 0xFF, 0xFF] * 8,
+
+                [0xFF, 0x00, 0x00] * 8,
+                [0x00, 0xFF, 0x00] * 8,
+                [0x00, 0x00, 0xFF] * 8,
+
+            ]:
+                log.info('Pushing %s', data)
+                update_func(data)
+                time.sleep(1)
+
+    def _update_1(self, buffer):
+        buffer = buffer + [0x00, 0x00, 0x00]
         self._spi.xfer(buffer)
+
+    def _update_2(self, buffer):
+        buffer = buffer + [0x00, 0x00, 0x00]
+        self._spi.xfer2(buffer)
