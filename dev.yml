@@ -1,6 +1,6 @@
 up:
   - python: 3.6.4
-  # - pip: [requirements.txt]
+  - pip: [requirements.txt]
 
 commands:
   run:

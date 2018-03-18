@@ -3,7 +3,8 @@ import signal
 import typing
 import logging
 
-from . import leds
+from .light.leds import RGBLeds
+from . import display
 
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
@@ -21,6 +22,9 @@ class App():
             self.loop()
 
     def loop(self):
-        leds.RGBLeds().test()
-
+        # RGBLeds().test()
         # leds.blinking_led_loop()
+
+        text = str(int(time.time() % 10000))
+        display.test()
+        time.sleep(1)

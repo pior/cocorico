@@ -2,7 +2,7 @@ import time
 import logging
 
 # import gpiozero
-from . import hal
+from cocorico.hal.spi import SpiDev
 from . import colors
 
 log = logging.getLogger(__name__)
@@ -28,7 +28,7 @@ def color_to_lpd8806(color):
 
 class RGBLeds:
     def __init__(self, led=8):
-        self._spi = hal.SpiDev()
+        self._spi = SpiDev()
         self._spi.open(1, 0)
         self._spi.max_speed_hz = 4_000_000
 
