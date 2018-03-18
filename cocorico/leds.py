@@ -47,16 +47,15 @@ class RGBLeds:
                 [[0xFF, 0x00, 0x00]] * 8,
                 [[0x00, 0xFF, 0x00]] * 8,
                 [[0x00, 0x00, 0xFF]] * 8,
-
             ]:
                 log.info('Pushing %s', data)
                 update_func(data)
                 time.sleep(1)
 
     def _update_1(self, buffer):
-        for chunk in buffer + [0x00, 0x00, 0x00]:
+        for chunk in buffer + [[0x00, 0x00, 0x00]]:
             self._spi.xfer(chunk)
 
     def _update_2(self, buffer):
-        for chunk in buffer + [0x00, 0x00, 0x00]:
+        for chunk in buffer + [[0x00, 0x00, 0x00]]:
             self._spi.xfer2(chunk)
