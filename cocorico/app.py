@@ -15,7 +15,8 @@ class App():
     def __init__(self):
         log.info('Initializing...')
         self.display = Display()
-        self.button = Button(pin=17, callback=self.btn_callback)
+        self.button1 = Button(pin=17, callback=self.btn1_callback)
+        self.button2 = Button(pin=27, callback=self.btn2_callback)
         self.counter = 0
         log.info('Initialized.')
 
@@ -28,11 +29,14 @@ class App():
     def loop(self):
             # RGBLeds().test()
             # leds.blinking_led_loop()
-
             time.sleep(1)
 
-    def btn_callback(self):
+    def btn1_callback(self):
         self.counter += 1
+        self.refresh_display()
+
+    def btn2_callback(self):
+        self.counter = max(0, self.counter - 1)
         self.refresh_display()
 
     def refresh_display(self):
