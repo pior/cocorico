@@ -6,6 +6,7 @@ import logging
 from .light.leds import RGBLeds
 from .display import Display
 from .button import Button
+from .clock import Clock
 
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
@@ -14,6 +15,7 @@ log = logging.getLogger(__name__)
 class App():
     def __init__(self):
         log.info('Initializing...')
+        self.clock = Clock()
         self.display = Display()
         # self.btn_alarm = Button(pin=17, callback=self.btn_alarm_cb)
         # self.btn_alarm_time = Button(pin=27, callback=self.btn_alarm_time_cb)
@@ -40,4 +42,4 @@ class App():
     #     self.refresh_display()
 
     def refresh_display(self):
-        self.display.clock()
+        self.display.as_clock(self.clock.time_str)
