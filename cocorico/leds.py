@@ -12,7 +12,7 @@ def blinking_led_loop():
 
     while True:
         state = not state
-        print(state)
+        # print(state)
         led1.value = state
         led2.value = not state
         time.sleep(0.2)
