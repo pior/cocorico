@@ -16,9 +16,11 @@ class App():
 
     def run(self):
         log.info('Running...')
-        self.loop()
+
+        while True:
+            self.loop()
 
     def loop(self):
         leds.RGBLeds().test()
 
-        leds.blinking_led_loop()
+        # leds.blinking_led_loop()

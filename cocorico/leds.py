@@ -2,7 +2,7 @@ import time
 import logging
 
 # import gpiozero
-import spidev
+from . import hal
 
 log = logging.getLogger(__name__)
 
@@ -22,40 +22,41 @@ log = logging.getLogger(__name__)
 
 
 class RGBLeds:
-    def __init__(self, speed=1_000_000):
-        self._spi = spidev.SpiDev()
+    END_SEQUENCE = [0x00, 0x00, 0x00]
+
+    def __init__(self, led=8, speed=1_000_000):
+        self._spi = hal.SpiDev()
         self._spi.open(0, 0)
         self._spi.max_speed_hz = speed
 
+        self._led = led
+        self._buffer = [0x00, 0x00, 0x00] * led
+
+    def refresh(self):
+        self._spi.xfer(self._buffer + self.END_SEQUENCE)
+
+    def set_pixel(self, pixel, color):
+        if 0 <= pixel < self._led:
+            self._buffer[pixel * 3: (pixel + 1) * 3] = color
+        else:
+            log.info('Invalid pixel %s on %s strip', pixel, self._led)
+
+    def set_all(self, color):
+        for pixel in range(self._led):
+            self.set_pixel(pixel, color)
+
     def test(self):
-        for update_func in [self._update_1, self._update_2]:
-            log.info('With %s', update_func)
-
-            for data in [
-                [[0x00, 0x00, 0x00]],
-                [[0x00, 0x00, 0x00]] * 4,
-                [[0x00, 0x00, 0x00]] * 8,
-
-                [[0x80, 0x80, 0x80]],
-                [[0x80, 0x80, 0x80]] * 4,
-                [[0x80, 0x80, 0x80]] * 8,
-
-                [[0xFF, 0xFF, 0xFF]],
-                [[0xFF, 0xFF, 0xFF]] * 4,
-                [[0xFF, 0xFF, 0xFF]] * 8,
-
-                [[0xFF, 0x00, 0x00]] * 8,
-                [[0x00, 0xFF, 0x00]] * 8,
-                [[0x00, 0x00, 0xFF]] * 8,
-            ]:
-                log.info('Pushing %s', data)
-                update_func(data)
-                time.sleep(1)
-
-    def _update_1(self, buffer):
-        for chunk in buffer + [[0x00, 0x00, 0x00]]:
-            self._spi.xfer(chunk)
-
-    def _update_2(self, buffer):
-        for chunk in buffer + [[0x00, 0x00, 0x00]]:
-            self._spi.xfer2(chunk)
+        for color in [
+            (0x00, 0x00, 0x00),
+            (0x40, 0x40, 0x40),
+            (0x80, 0x80, 0x80),
+            (0xA0, 0xA0, 0xA0),
+            (0xFF, 0xFF, 0xFF),
+            (0xFF, 0x00, 0x00),
+            (0x00, 0xFF, 0x00),
+            (0x00, 0x00, 0xFF),
+        ]:
+            log.info('Color %s', color)
+            self.set_all(color)
+            self.refresh()
+            time.sleep(1)
