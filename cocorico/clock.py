@@ -4,50 +4,49 @@ import pytz
 
 
 class Alarm:
-    TRIGGER_PERIOD = datetime.timedelta(minutes=10)
+    DETECTION_PERIOD = datetime.timedelta(minutes=1)
 
     def __init__(self, clock, settings):
         self._settings = settings
         self._clock = clock
         self._triggered = False
-        self._last_ack = clock.now
+        self._ack_time = clock.now
 
     @property
-    def next_alarm_time(self):
+    def effective_time(self):
         now = self._clock.now
 
-        t = self._settings.time
-        alarm_time = self._clock.now.replace(hour=t.hour, minute=t.minute)
+        alarm_time = self._settings.time
+        alarm_datetime = now.replace(hour=alarm_time.hour, minute=alarm_time.minute)
 
-        safe_limit = now + self.TRIGGER_PERIOD
-        guard_time_for_today_alarm = max(safe_limit, self._last_ack)
+        threshold = now + datetime.timedelta(minutes=1)  # Give us a minute to call triggered()
+        threshold = min(threshold, self._ack_time)  # When acked, effective time become the next cycle
 
-        if alarm_time < guard_time_for_today_alarm:
-            return alarm_time
-        else:
-            return alarm_time + datetime.timedelta(hours=24)
+        if now > threshold:
+            alarm_datetime += datetime.timedelta(hours=24)
 
-    @property
-    def seconds_to_next_alarm(self):
-        return (self.next_alarm_time - self._clock.now).total_seconds()
+        return alarm_datetime
 
     @property
     def triggered(self):
-        if not self._triggered and (self.next_alarm_time < self._clock.now):
-            self._triggered = True
+        if not self._settings.active:
+            self._triggered = False
+        elif not self._triggered:
+            if self._clock.now > self.effective_time:
+                self._triggered = True
         return self._triggered
 
     def ack(self):
-        self._last_ack = self._clock.now
+        self._ack_time = self._clock.now
         self._triggered = False
 
 
 class AlarmSettings:
     def __init__(self, increment=1):
-        self._time = (23, 24)
+        self._time = (00, 13)
         self._time_update = self._time
         self._increment = min(60, increment)  # > 60 is not supported
-        self.active = False
+        self.active = True
 
     def toggle(self):
         self.active = not self.active
