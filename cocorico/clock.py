@@ -10,7 +10,6 @@ class Alarm:
         self._settings = settings
         self._clock = clock
         self._triggered = False
-        self._last_check = clock.now
         self._last_ack = clock.now
 
     @property
@@ -20,10 +19,10 @@ class Alarm:
         t = self._settings.time
         alarm_time = self._clock.now.replace(hour=t.hour, minute=t.minute)
 
-        safe_limit = now - self.TRIGGER_PERIOD
+        safe_limit = now + self.TRIGGER_PERIOD
         guard_time_for_today_alarm = max(safe_limit, self._last_ack)
 
-        if alarm_time > guard_time_for_today_alarm:
+        if alarm_time < guard_time_for_today_alarm:
             return alarm_time
         else:
             return alarm_time + datetime.timedelta(hours=24)
@@ -33,12 +32,9 @@ class Alarm:
         return (self.next_alarm_time - self._clock.now).total_seconds()
 
     @property
-    def in_alarm(self):
-        if not self._triggered:
-            if self._last_check < self.next_alarm_time < self._clock.now:
-                self._triggered = True
-
-        self._last_check = self._clock.time
+    def triggered(self):
+        if not self._triggered and (self.next_alarm_time < self._clock.now):
+            self._triggered = True
         return self._triggered
 
     def ack(self):
@@ -46,11 +42,15 @@ class Alarm:
         self._triggered = False
 
 
-class AlarmTimeSetting:
-    def __init__(self, increment=15):
-        self._time = (8, 0)
+class AlarmSettings:
+    def __init__(self, increment=1):
+        self._time = (23, 24)
         self._time_update = self._time
         self._increment = min(60, increment)  # > 60 is not supported
+        self.active = True
+
+    def toggle(self):
+        self.active = not self.active
 
     @property
     def time(self):
