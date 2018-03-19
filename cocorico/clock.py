@@ -34,7 +34,6 @@ class Alarm:
             self._triggered = False
         elif not self._triggered:
             et = self.effective_time
-            print("effective time = ", et)
             if self._clock.now > et:
                 self._triggered = True
         return self._triggered
@@ -46,7 +45,9 @@ class Alarm:
 
 class AlarmSettings:
     def __init__(self, increment=1):
-        self._time = (00, 24)
+        soonish = Clock().now + datetime.timedelta(minutes=3)
+        self._time = (soonish.hour, soonish.minute)  # For testing, set it soonish
+
         self._time_update = self._time
         self._increment = min(60, increment)  # > 60 is not supported
         self.active = True
