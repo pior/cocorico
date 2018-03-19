@@ -3,11 +3,10 @@ import logging
 
 from .light.leds import RGBLeds
 from .display import Display
-from .display.state import State
+from .state import State
 from .button import Button
 from .clock import Alarm, AlarmSettings, Clock
 
-logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
 
 
@@ -92,6 +91,6 @@ class App():
         self.refresh_display()
 
     def btn_snooze_cb(self):
-        if state.is_alarm():
+        if self.state.is_alarm():
             self.do_alarm_ack()
             return
