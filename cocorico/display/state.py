@@ -25,5 +25,8 @@ class State:
     def set_alarm(self):
         self._set(self.ALARM, 3)
 
+    def is_alarm(self):
+        return self._state == self.ALARM
+
     def set_alarm_time(self):
         self._set(self.ALARM_TIME, 2)

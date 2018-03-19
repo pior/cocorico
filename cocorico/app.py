@@ -61,23 +61,37 @@ class App():
         else:
             log.error('Unknown state %s', state)
 
+    def do_alarm_ack(self):
+        self.alarm.ack()
+        self.state.set_clock()
+        self.refresh_display()
+
     def btn_up_cb(self):
+        if self.state.is_alarm():
+            self.do_alarm_ack()
+            return
         self.alarm_settings.up()
         self.alarm_settings.set()
         self.state.set_alarm_time()
         self.refresh_display()
 
     def btn_down_cb(self):
+        if self.state.is_alarm():
+            self.do_alarm_ack()
+            return
         self.alarm_settings.down()
         self.alarm_settings.set()
         self.state.set_alarm_time()
         self.refresh_display()
 
     def btn_onoff_cb(self):
+        if self.state.is_alarm():
+            self.do_alarm_ack()
+            return
         self.alarm_settings.toggle()
         self.refresh_display()
 
     def btn_snooze_cb(self):
-        self.alarm.ack()
-        self.state.set_clock()
-        self.refresh_display()
+        if state.is_alarm():
+            self.do_alarm_ack()
+            return
