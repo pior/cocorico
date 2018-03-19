@@ -79,4 +79,5 @@ class App():
 
     def btn_snooze_cb(self):
         self.alarm.ack()
+        self.state.set_clock()
         self.refresh_display()
