@@ -17,10 +17,11 @@ class Alarm:
         now = self._clock.now
 
         alarm_time = self._settings.time
-        alarm_datetime = now.replace(hour=alarm_time.hour, minute=alarm_time.minute)
+        alarm_datetime = now.replace(hour=alarm_time.hour, minute=alarm_time.minute, second=0, microsecond=0)
 
         threshold = alarm_datetime + datetime.timedelta(minutes=1)  # Give us a minute to call triggered()
-        threshold = min(threshold, self._ack_time)  # When acked, effective time become the next cycle
+        if self._ack_time > alarm_datetime:
+            threshold = min(threshold, self._ack_time)  # If acked, effective time jump to next cycle
 
         if now > threshold:
             alarm_datetime += datetime.timedelta(hours=24)
@@ -32,7 +33,9 @@ class Alarm:
         if not self._settings.active:
             self._triggered = False
         elif not self._triggered:
-            if self._clock.now > self.effective_time:
+            et = self.effective_time
+            print("effective time = ", et)
+            if self._clock.now > et:
                 self._triggered = True
         return self._triggered
 
@@ -43,7 +46,7 @@ class Alarm:
 
 class AlarmSettings:
     def __init__(self, increment=1):
-        self._time = (00, 15)
+        self._time = (00, 24)
         self._time_update = self._time
         self._increment = min(60, increment)  # > 60 is not supported
         self.active = True
