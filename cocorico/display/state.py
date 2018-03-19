@@ -26,4 +26,4 @@ class State:
         self._set(self.ALARM, 3)
 
     def set_alarm_time(self):
-        self._set(self.ALARM_TIME, 3)
+        self._set(self.ALARM_TIME, 2)

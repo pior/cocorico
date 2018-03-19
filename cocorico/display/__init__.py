@@ -24,7 +24,7 @@ class Display:
         self._device = ssd1306(serial)
 
         self._clock_font = ImageFont.truetype('fonts/digital-7-mono.ttf', 56)
-        self._text_font = ImageFont.truetype('fonts/digital-7-mono.ttf', 14)
+        self._text_font = ImageFont.truetype('fonts/digital-7-mono.ttf', 18)
 
     # def announce(self, text):
     #     with canvas(self._device) as draw:
