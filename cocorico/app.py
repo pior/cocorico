@@ -42,21 +42,21 @@ class App():
 
     def refresh_display(self):
         state = self.state.get()
-        log.info("UI state = %s", state)
+        log.info('State = %s', state)
 
         if state == State.CLOCK:
             if self.alarm_settings.active:
-                alarm_time = self.alarm_settings.time.strftime("%H:%M")
-                text = alarm_time
+                alarm_time = self.alarm_settings.time.strftime('%H:%M')
+                text = 'Alarm: %s' % alarm_time
             else:
                 text = ''
             self.display.as_clock(self.clock.time, text)
 
         elif state == State.ALARM:
-            self.display.as_clock(self.clock.time, "ALARM!!!")
+            self.display.as_clock(self.clock.time, 'ALARM!!!')
 
         elif state == State.ALARM_TIME:
-            self.display.as_clock(self.alarm_settings.time, "SET TIME")
+            self.display.as_clock(self.alarm_settings.time, 'SET TIME')
 
         else:
             log.error('Unknown state %s', state)

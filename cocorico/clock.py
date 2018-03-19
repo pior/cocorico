@@ -47,7 +47,7 @@ class AlarmSettings:
         self._time = (23, 24)
         self._time_update = self._time
         self._increment = min(60, increment)  # > 60 is not supported
-        self.active = True
+        self.active = False
 
     def toggle(self):
         self.active = not self.active
