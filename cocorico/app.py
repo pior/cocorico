@@ -36,8 +36,10 @@ class App():
 
     def btn_alarm_up_cb(self):
         self.alarm_settings.up()
+        self.alarm_settings.set()
         self.display.as_set_alarm(self.alarm_settings.time)
 
     def btn_alarm_down_cb(self):
         self.alarm_settings.down()
+        self.alarm_settings.set()
         self.display.as_set_alarm(self.alarm_settings.time)
