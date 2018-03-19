@@ -19,7 +19,7 @@ class Alarm:
         alarm_time = self._settings.time
         alarm_datetime = now.replace(hour=alarm_time.hour, minute=alarm_time.minute)
 
-        threshold = now + datetime.timedelta(minutes=1)  # Give us a minute to call triggered()
+        threshold = alarm_datetime + datetime.timedelta(minutes=1)  # Give us a minute to call triggered()
         threshold = min(threshold, self._ack_time)  # When acked, effective time become the next cycle
 
         if now > threshold:
@@ -43,7 +43,7 @@ class Alarm:
 
 class AlarmSettings:
     def __init__(self, increment=1):
-        self._time = (00, 13)
+        self._time = (00, 15)
         self._time_update = self._time
         self._increment = min(60, increment)  # > 60 is not supported
         self.active = True
