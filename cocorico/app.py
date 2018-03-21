@@ -3,6 +3,7 @@ import logging
 
 from .light.leds import RGBLeds
 from .display import Display
+from .sound import Sound
 from .state import State
 from .button import Button
 from .clock import Alarm, AlarmSettings, Clock
@@ -15,6 +16,7 @@ class App():
     def __init__(self):
         log.info('Initializing...')
         self.display = Display()
+        self.sound = Sound()
         self.state = State()
         self.clock = Clock()
         self.alarm_settings = AlarmSettings()
@@ -29,14 +31,21 @@ class App():
     def run(self):
         log.info('Running...')
 
+        self.sound.start('start-piano.ogg')
+        self.sound.start('back-in-summer-ukelele.ogg')
+
         while True:
             self.periodic_routine()
             time.sleep(1)
 
     def periodic_routine(self):
+        self.sound.shutdown_if_possible()
+
         if self.alarm.triggered:
             log.info('Triggered!')
             self.state.set_alarm()
+            self.sound.start('back-in-summer-ukelele.ogg')
+
         self.refresh_display()
 
     def refresh_display(self):
