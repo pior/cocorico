@@ -1,7 +1,7 @@
 FROM resin/raspberry-pi-python:3.6-slim
 
 RUN apt-get update && apt-get install -yq \
-    zlib1g-dev libjpeg-dev libfreetype6-dev && \
+    zlib1g-dev libjpeg-dev libfreetype6-dev libsdl1.2-dev && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 #   alsa-utils libasound2-dev && \
 
