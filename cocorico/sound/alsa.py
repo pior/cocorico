@@ -1,3 +1,5 @@
+from threading import Event
+
 import alsaaudio
 
 
@@ -10,7 +12,8 @@ FORMAT_MAP = {
 
 
 def _get_period_size(wavefile):
-    return wavefile.getframerate() / 8
+    return wavefile.getframerate() // 8
+
 
 def _get_format(wavefile):
     sampling_width = wavefile.getsampwidth()
@@ -22,10 +25,16 @@ def _get_format(wavefile):
 class AlsaPlayer:
     def __init__(self):
         self.device = alsaaudio.PCM()
+        self.should_stop = Event()
 
     def start(self, path):
         wavefile = wave.open(path, 'rb')
+        try:
+            self._play(wavefile)
+        finally:
+            wavefile.close()
 
+    def _play(self, wavefile):
         period_size = _get_period_size(wavefile)
 
         self.device.setchannels(wavefile.getnchannels())
@@ -37,4 +46,10 @@ class AlsaPlayer:
             frames = wavefile.readframes(period_size)
             if not frames:
                 break
+            if self.should_stop.is_set():
+                self.should_stop.clear()
+                break
             self.device.write(frames)
+
+    def stop(self):
+        self.should_stop.set()
