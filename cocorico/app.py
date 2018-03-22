@@ -31,7 +31,7 @@ class App():
     def run(self):
         log.info('Running...')
 
-        self.sound.start('hello-man.wav')
+        self.sound.for_startup()
 
         while True:
             self.periodic_routine()
@@ -43,24 +43,25 @@ class App():
         if self.alarm.triggered:
             log.info('Triggered!')
             self.state.set_alarm()
-            self.sound.start('cuckoo.wav')
 
-        self.refresh_display()
+        self.refresh()
 
-    def refresh_display(self):
+    def refresh(self):
         state = self.state.get()
         log.info('State = %s', state)
 
-        if state == State.CLOCK:
+        if state == State.CLOCK:  # STANDBY
             if self.alarm_settings.active:
                 alarm_time = self.alarm_settings.time.strftime('%H:%M')
                 text = '     %s' % alarm_time
             else:
                 text = ''
             self.display.as_clock(self.clock.time, text)
+            self.sound.silence()
 
         elif state == State.ALARM:
             self.display.as_clock(self.clock.time, ' /!\ ALARM /!\\')
+            self.sound.for_alarm()
 
         elif state == State.ALARM_TIME:
             self.display.as_clock(self.alarm_settings.time, 'SET TIME')
@@ -71,7 +72,7 @@ class App():
     def do_alarm_ack(self):
         self.alarm.ack()
         self.state.set_clock()
-        self.refresh_display()
+        self.refresh()
 
     def btn_up_cb(self):
         if self.state.is_alarm():
@@ -80,7 +81,7 @@ class App():
         self.alarm_settings.up()
         self.alarm_settings.set()
         self.state.set_alarm_time()
-        self.refresh_display()
+        self.refresh()
 
     def btn_down_cb(self):
         if self.state.is_alarm():
@@ -89,14 +90,14 @@ class App():
         self.alarm_settings.down()
         self.alarm_settings.set()
         self.state.set_alarm_time()
-        self.refresh_display()
+        self.refresh()
 
     def btn_onoff_cb(self):
         if self.state.is_alarm():
             self.do_alarm_ack()
             return
         self.alarm_settings.toggle()
-        self.refresh_display()
+        self.refresh()
 
     def btn_snooze_cb(self):
         if self.state.is_alarm():

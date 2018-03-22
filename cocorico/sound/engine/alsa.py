@@ -1,4 +1,4 @@
-from threading import Event
+import wave
 
 import alsaaudio
 
@@ -25,7 +25,7 @@ def _get_format(wavefile):
 class AlsaPlayer:
     def __init__(self):
         self.device = alsaaudio.PCM()
-        self.should_stop = Event()
+        self.should_stop = False
 
     def start(self, path):
         wavefile = wave.open(path, 'rb')

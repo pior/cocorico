@@ -1,54 +1,34 @@
 import os.path
 
-from cocorico.hal.gpio import GPIO
+from .amplifier import Amplifier
 from .worker import Worker
-
-
-def build_player():
-    try:
-        from .alsa import AlsaPlayer as Player
-    except ImportError:
-        from .afplay import Afplay as Player
-
-    player = Player()
-    return Worker(player)
+from . import engine
 
 
 class Sound:
-    # SHUTDOWN_PIN = 4  # BCM pin 4
-
     def __init__(self):
-        # GPIO.setup(self.SHUTDOWN_PIN, GPIO.OUT, initial=GPIO.LOW)
+        self.amplifier = Amplifier()
 
-        self.worker = build_player()
+        self.worker = Worker(engine.build())
         self.worker.start()
 
-        # self._shutdown = False
+        self.playing = None
 
-    # def close(self):
-    #     GPIO.cleanup(self.SHUTDOWN_PIN)
-    #     pygame.mixer.quit()
+    def for_startup(self):
+        self._play('hello-man.wav')
 
-    # def _enable(self):
-    #     if self._shutdown:
-    #         GPIO.output(self.SHUTDOWN_PIN, GPIO.HIGH)
-    #         self._shutdown = False
+    def for_alarm(self):
+        filename = 'cuckoo.wav'
+        if self.playing != filename:
+            self.playing = filename
+            self._play(filename)
 
-    # def _disable(self):
-    #     if not self._shutdown:
-    #         GPIO.output(self.SHUTDOWN_PIN, GPIO.LOW)
-    #         self._shutdown = True
-
-    def start(self, filename):
-        # self._enable()
-        path = os.path.join('sounds', filename)
+    def _play(self, name):
+        self.amplifier.enable()
+        path = os.path.join('sounds', name)
         self.worker.enqueue(path)
 
-
-    # def shutdown_if_possible(self):
-    #     if not self.playing:
-    #         self._disable()
-
-    # @property
-    # def playing(self):
-    #     return bool(pygame.mixer.music.get_busy())
+    def silence(self):
+        self.worker.stop()
+        self.playing = None
+        self.amplifier.disable()

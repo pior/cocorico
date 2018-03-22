@@ -1,6 +1,7 @@
 import wave
-from threading import Thread
-from queue import Queue
+from threading import Thread, Event
+
+from queue import Queue, Empty
 import logging
 
 log = logging.getLogger(__name__)
@@ -11,12 +12,25 @@ class Worker(Thread):
     def __init__(self, player):
         Thread.__init__(self)
         self.setDaemon(True)
+
         self.queue = Queue()
+        self.stop_requested = Event()
+
         self.player = player
 
     def enqueue(self, path):
         log.info("Enqueued %s", path)
         self.queue.put(path)
+
+    def stop(self):
+        try:
+            while True:
+                self.queue.get_nowait()
+        except Empty:
+            pass
+
+        self.stop_requested.set()
+        self.player.stop()
 
     def run(self):
         log.info("Sound worker started")
