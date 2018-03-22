@@ -6,7 +6,7 @@ import alsaaudio
 FORMAT_MAP = {
     1: alsaaudio.PCM_FORMAT_U8,
     2: alsaaudio.PCM_FORMAT_S16_LE,
-    3: alsaaudio.PCM_FORMAT_S24_3LE,
+    3: alsaaudio.PCM_FORMAT_S24_LE,
     4: alsaaudio.PCM_FORMAT_S32_LE,
 }
 
