@@ -16,7 +16,7 @@ class App():
     def __init__(self):
         log.info('Initializing...')
         self.display = Display()
-        # self.sound = Sound()
+        self.sound = Sound()
         self.light = Light()
 
         self.state = State()
@@ -33,7 +33,7 @@ class App():
     def run(self):
         log.info('Running...')
 
-        # self.sound.for_startup()
+        self.sound.for_startup()
 
         while True:
             self.periodic_routine()
@@ -60,11 +60,11 @@ class App():
             else:
                 text = ''
             self.display.as_clock(self.clock.time, text)
-            # self.sound.standby()
+            self.sound.standby()
 
         elif state == State.ALARM:
             self.display.as_clock(self.clock.time, ' /!\ ALARM /!\\')
-            # self.sound.for_alarm()
+            self.sound.for_alarm()
 
         elif state == State.ALARM_TIME:
             self.display.as_clock(self.alarm_settings.time, 'SET TIME')

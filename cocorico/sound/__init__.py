@@ -6,30 +6,36 @@ from . import engine
 
 
 class Sound:
+    ALARM_FILE = 'cuckoo.wav'
+    STARTUP_FILE = 'hello-man.wav'
+
     def __init__(self):
-        self.amplifier = Amplifier()
+        self._amplifier = Amplifier()
+        self._engine = engine.build()
 
-        self.worker = Worker(engine.build())
-        self.worker.start()
-
-        self.in_alarm = False
+        self._playing = None
 
     def for_startup(self):
-        self._start('hello-man.wav')
+        self._start(self.STARTUP_FILE)
 
     def for_alarm(self):
-        self.in_alarm = True
-        filename = 'cuckoo.wav'
-        if self.playing != filename:
-            self.playing = filename
-            self._start(filename)
-
-    def _start(self, name):
-        self.amplifier.enable()
-        path = os.path.join('sounds', name)
-        self.worker.play_once(path)
+        if self._playing == self.ALARM_FILE and self._engine.is_playing():
+            return
+        self._start(self.ALARM_FILE)
 
     def standby(self):
-        self.worker.stop()
-        self.in_alarm = False
-        self.amplifier.disable()
+        if self._playing:
+            self._playing = None
+        self._engine.stop()
+        self._amplifier.disable()
+
+    def _start(self, name):
+        self._amplifier.enable()
+
+        if self._engine.is_playing:
+            self._engine.stop()
+
+        path = os.path.join('sounds', name)
+        self._engine.start(path)
+
+        self._playing = name

@@ -10,4 +10,11 @@ class AlsaPlayer:
         self._play_obj = wave_object.play()
 
     def stop(self):
-        simpleaudio.stop_all()
+        if self._play_obj:
+            self._play_obj.stop()
+        self._play_obj = None
+
+    def is_playing(self):
+        if self._play_obj:
+            return self._play_obj.is_playing()
+        return False

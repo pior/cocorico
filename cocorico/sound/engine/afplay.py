@@ -7,3 +7,6 @@ class Afplay:
 
     def stop(self):
         pass
+
+    def is_playing(self):
+        return False
