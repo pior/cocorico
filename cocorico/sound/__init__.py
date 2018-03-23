@@ -1,8 +1,7 @@
 import os.path
 
 from .amplifier import Amplifier
-# from .worker import Worker
-from . import engine
+from .engine import Engine
 
 
 class Sound:
@@ -11,7 +10,7 @@ class Sound:
 
     def __init__(self):
         self._amplifier = Amplifier()
-        self._engine = engine.build()
+        self._engine = Engine()
 
         self._playing = None
 
