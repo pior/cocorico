@@ -5,9 +5,17 @@ import simpleaudio
 log = logging.getLogger(__name__)
 
 
+def tweak_alsa():
+    cmd = 'amixer set Master 100% unmute'
+
+    log.info("Trying to configure the alsa mixer: %s", cmd)
+    subprocess.run(cmd)
+
+
 class AlsaPlayer:
     def __init__(self):
         self._play_obj = None
+        tweak_alsa()
 
     def start(self, path):
         wave_object = simpleaudio.WaveObject.from_wave_file(path)
