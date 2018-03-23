@@ -27,7 +27,7 @@ class Sound:
     def _start(self, name):
         self.amplifier.enable()
         path = os.path.join('sounds', name)
-        self.worker.enqueue(path)
+        self.worker.play_once(path)
 
     def standby(self):
         self.worker.stop()

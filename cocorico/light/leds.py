@@ -27,13 +27,13 @@ def color_to_lpd8806(color):
 
 
 class RGBLeds:
-    def __init__(self, led=8):
+    def __init__(self, led_count):
         self._spi = SpiDev()
         self._spi.open(1, 0)
         self._spi.max_speed_hz = 4_000_000
 
-        self._led = led
-        self._pixel_buffer = [colors.Black] * led
+        self._led_count = led_count
+        self._pixel_buffer = [colors.Black] * led_count
 
     def refresh(self):
         data = [
@@ -51,10 +51,4 @@ class RGBLeds:
     #         log.info('Invalid pixel %s on %s strip', pixel, self._led)
 
     def set_all(self, color):
-        self._pixel_buffer = [color] * self._led
-
-    def test(self):
-        for color in colors.wheel():
-            self.set_all(color)
-            self.refresh()
-            time.sleep(0.02)
+        self._pixel_buffer = [color] * self._led_count
