@@ -17,8 +17,9 @@ def _get_period_size(wavefile):
 
 def _get_format(wavefile):
     sampling_width = wavefile.getsampwidth()
-    format_ = FORMAT_MAP.get()
-    if not format_:
+    try:
+        return FORMAT_MAP[sampling_width]
+    except KeyrError:
         raise ValueError('Unsupported format: sampling_width=%s' % sampling_width)
 
 
@@ -46,10 +47,10 @@ class AlsaPlayer:
             frames = wavefile.readframes(period_size)
             if not frames:
                 break
-            if self.should_stop.is_set():
-                self.should_stop.clear()
+            if self.should_stop:
+                self.should_stop = False
                 break
             self.device.write(frames)
 
     def stop(self):
-        self.should_stop.set()
+        self.should_stop = True

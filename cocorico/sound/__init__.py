@@ -12,23 +12,24 @@ class Sound:
         self.worker = Worker(engine.build())
         self.worker.start()
 
-        self.playing = None
+        self.in_alarm = False
 
     def for_startup(self):
-        self._play('hello-man.wav')
+        self._start('hello-man.wav')
 
     def for_alarm(self):
+        self.in_alarm = True
         filename = 'cuckoo.wav'
         if self.playing != filename:
             self.playing = filename
-            self._play(filename)
+            self._start(filename)
 
-    def _play(self, name):
+    def _start(self, name):
         self.amplifier.enable()
         path = os.path.join('sounds', name)
         self.worker.enqueue(path)
 
-    def silence(self):
+    def standby(self):
         self.worker.stop()
-        self.playing = None
+        self.in_alarm = False
         self.amplifier.disable()

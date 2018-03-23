@@ -18,9 +18,12 @@ class Worker(Thread):
 
         self.player = player
 
-    def enqueue(self, path):
-        log.info("Enqueued %s", path)
+    def play_once(self, path):
+        log.info("Play once %s", path)
         self.queue.put(path)
+
+    def play_loop(self, path):
+        log.info("Play loop %s", path)
 
     def stop(self):
         try:

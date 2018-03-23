@@ -57,7 +57,7 @@ class App():
             else:
                 text = ''
             self.display.as_clock(self.clock.time, text)
-            self.sound.silence()
+            self.sound.standby()
 
         elif state == State.ALARM:
             self.display.as_clock(self.clock.time, ' /!\ ALARM /!\\')
