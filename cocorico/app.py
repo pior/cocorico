@@ -24,10 +24,10 @@ class App():
         self.alarm_settings = AlarmSettings()
         self.alarm = Alarm(clock=self.clock, settings=self.alarm_settings)
 
-        self.btn_up = Button(pin=17, callback=self.btn_up_cb)
-        self.btn_down = Button(pin=27, callback=self.btn_down_cb)
-        self.btn_onoff = Button(pin=22, callback=self.btn_onoff_cb)
-        self.btn_snooze = Button(pin=23, callback=self.btn_snooze_cb)
+        self.btn_up = Button(pin=22, callback=self.btn_up_cb)
+        self.btn_down = Button(pin=23, callback=self.btn_down_cb)
+        self.btn_onoff = Button(pin=17, callback=self.btn_onoff_cb)
+        self.btn_snooze = Button(pin=27, callback=self.btn_snooze_cb)
         log.info('Initialized.')
 
     def run(self):

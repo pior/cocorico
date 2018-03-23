@@ -1,7 +1,7 @@
 import os.path
 
 from .amplifier import Amplifier
-from .worker import Worker
+# from .worker import Worker
 from . import engine
 
 

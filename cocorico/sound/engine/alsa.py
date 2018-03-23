@@ -1,56 +1,13 @@
-import wave
-
-import alsaaudio
-
-
-FORMAT_MAP = {
-    1: alsaaudio.PCM_FORMAT_U8,
-    2: alsaaudio.PCM_FORMAT_S16_LE,
-    3: alsaaudio.PCM_FORMAT_S24_LE,
-    4: alsaaudio.PCM_FORMAT_S32_LE,
-}
-
-
-def _get_period_size(wavefile):
-    return wavefile.getframerate() // 8
-
-
-def _get_format(wavefile):
-    sampling_width = wavefile.getsampwidth()
-    try:
-        return FORMAT_MAP[sampling_width]
-    except KeyrError:
-        raise ValueError('Unsupported format: sampling_width=%s' % sampling_width)
+import simpleaudio
 
 
 class AlsaPlayer:
     def __init__(self):
-        self.device = alsaaudio.PCM()
-        self.should_stop = False
+        self._play_obj = None
 
     def start(self, path):
-        wavefile = wave.open(path, 'rb')
-        try:
-            self._play(wavefile)
-        finally:
-            wavefile.close()
-
-    def _play(self, wavefile):
-        period_size = _get_period_size(wavefile)
-
-        self.device.setchannels(wavefile.getnchannels())
-        self.device.setrate(wavefile.getframerate())
-        self.device.setformat(_get_format(wavefile))
-        self.device.setperiodsize(period_size)
-
-        while True:
-            frames = wavefile.readframes(period_size)
-            if not frames:
-                break
-            if self.should_stop:
-                self.should_stop = False
-                break
-            self.device.write(frames)
+        wave_object = simpleaudio.WaveObject.from_wave_file(path)
+        self._play_obj = wave_object.play()
 
     def stop(self):
-        self.should_stop = True
+        simpleaudio.stop_all()

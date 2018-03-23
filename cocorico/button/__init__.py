@@ -23,7 +23,7 @@ class Button:
         self._callback = callback
 
         GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-        GPIO.add_event_detect(pin, GPIO.FALLING, callback=self._gpio_callback, bouncetime=100)
+        GPIO.add_event_detect(pin, GPIO.FALLING, callback=self._gpio_callback, bouncetime=50)
 
     def _is_active(self):
         return GPIO.input(self._pin) == GPIO.LOW
@@ -32,8 +32,8 @@ class Button:
         log.info("%r: event channel=%s", self, channel)
 
         # Stupid debouncing for a start (blocking for 10ms)
-        for x in range(2):
-            time.sleep(0.005)
+        for x in range(4):
+            time.sleep(0.001)
             if not self._is_active():
                 log.info("%r: ignore bounce", self)
                 break

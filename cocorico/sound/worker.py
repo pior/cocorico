@@ -9,9 +9,7 @@ log = logging.getLogger(__name__)
 
 class Worker(Thread):
 
-    def __init__(self, player):
-        Thread.__init__(self)
-        self.setDaemon(True)
+    def __init__(self):
 
         self.queue = Queue()
         self.stop_requested = Event()
