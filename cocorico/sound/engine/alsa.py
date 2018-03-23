@@ -10,7 +10,10 @@ def tweak_alsa():
     cmd = 'amixer set Master 100% unmute'
 
     log.info("Trying to configure the alsa mixer: %s", cmd)
-    subprocess.run(cmd)
+    try:
+        subprocess.run(cmd.split())
+    except Exception as exc:
+        log.error("Failed: %s", exc)
 
 
 class AlsaPlayer:
