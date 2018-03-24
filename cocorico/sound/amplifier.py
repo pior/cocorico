@@ -1,3 +1,5 @@
+import atexit
+
 from cocorico.hal.gpio import GPIO
 
 
@@ -8,6 +10,8 @@ class Amplifier:
         GPIO.setup(self.SHUTDOWN_PIN, GPIO.OUT, initial=GPIO.HIGH)
         self._active = False
 
+        atexit.register(self.close)
+
     def enable(self):
         if not self._active:
             GPIO.output(self.SHUTDOWN_PIN, GPIO.LOW)
@@ -17,3 +21,6 @@ class Amplifier:
         if self._active:
             GPIO.output(self.SHUTDOWN_PIN, GPIO.HIGH)
             self._active = False
+
+    def close(self):
+        GPIO.cleanup(self.SHUTDOWN_PIN)

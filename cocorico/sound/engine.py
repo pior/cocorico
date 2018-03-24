@@ -13,11 +13,18 @@ class Engine:
     def __init__(self):
         self._pyaudio = pyaudio.PyAudio()
         self._stream = None
-        atexit.register(self.close)
 
         self._show_devices_info()
+        self._device_id = self._find_device_id()
+
+        atexit.register(self.close)
 
     def start(self, path):
+        log.info("Start playback for %s", path)
+        if self._device_id is None:
+            log.warning("Ignoring sound request (no device_id)")
+            return
+
         self.stop()
 
         wf = wave.open(path, 'rb')
@@ -32,17 +39,18 @@ class Engine:
             channels=wf.getnchannels(),
             rate=wf.getframerate(),
             output=True,
+            output_device_index=self._device_id,
             stream_callback=callback,
         )
         self._stream.start_stream()
 
     def stop(self):
-        if not self._stream:
-            return
-        self._stream.stop_stream()
+        if self._stream:
+            self._stream.stop_stream()
 
     def close(self):
         if self._pyaudio:
+            log.info("Terminate PyAudio")
             self._pyaudio.terminate()
             self._pyaudio = None
 
@@ -53,6 +61,21 @@ class Engine:
 
     def _show_devices_info(self):
         from pprint import pformat
-        log.info("Default: %s", pformat(self._pyaudio.get_default_output_device_info()))
-        for device_num in range(self._pyaudio.get_device_count()):
-            log.info("Device %s: %s", device_num, pformat(self._pyaudio.get_device_info_by_index(device_num)))
+        for device_info in self._get_devices_info():
+            log.info(pformat(device_info))
+
+    def _get_devices_info(self):
+        return [
+            self._pyaudio.get_device_info_by_index(device_num)
+            for device_num in range(self._pyaudio.get_device_count())
+        ]
+
+    def _find_device_id(self):
+        allowed = [
+            'C-Media USB Headphone Set: Audio (hw:1,0)',
+            'Built-in Output',  # MacOs
+        ]
+        for device_info in self._get_devices_info():
+            if device_info['name'] in allowed:
+                return device_info['index']
+        log.warning("Failed to find allowed sound device")

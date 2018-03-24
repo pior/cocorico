@@ -32,6 +32,7 @@ class Sound:
         self._amplifier.disable()
 
     def _start(self, name):
+        log.info("Playing %s", name)
         self._amplifier.enable()
 
         if self._engine.is_playing:
