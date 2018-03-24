@@ -1,7 +1,10 @@
+import logging
 import os.path
 
 from .amplifier import Amplifier
 from .engine import Engine
+
+log = logging.getLogger(__name__)
 
 
 class Sound:
