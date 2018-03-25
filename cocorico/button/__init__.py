@@ -14,8 +14,8 @@ class Button:
 
     Debouncing strategy:
     - block interrupt for 200ms using the RPi.GPIO bouncetime parameter
-    - read the input 3 times
-    - call function if 3 reads return active.
+    - read the input multiple times
+    - call function if all reads return active.
     """
 
     def __init__(self, pin, callback):
@@ -25,21 +25,33 @@ class Button:
         GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
         GPIO.add_event_detect(pin, GPIO.FALLING, callback=self._gpio_callback, bouncetime=50)
 
+        self._in_interrupt = False
+
     def _pressed(self):
         return GPIO.input(self._pin) == GPIO.LOW
 
     def _gpio_callback(self, channel):
         log.info("%r: event channel=%s", self, channel)
 
+        if self._in_interrupt:
+            log.info("%r: ignore interrupt during interrupt handling")
+            return
+
+        self._in_interrupt = True
+
         # Stupid debouncing for a start (blocking for 10ms)
-        for x in range(10):
+        for _ in range(10):
             # time.sleep(0.001)
             if not self._pressed():
                 log.info("%r: ignore bounce", self)
-                break
-        else:
-            log.info("%r: calling %s", self, self._callback)
-            self._callback()
+                return
+
+        self._in_interrupt = False
+        self._call_callback()
+
+    def _call_callback(self):
+        log.info("%r: calling %s", self, self._callback)
+        self._callback()
 
 
     def __repr__(self):
