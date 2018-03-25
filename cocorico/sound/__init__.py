@@ -26,17 +26,16 @@ class Sound:
         self._start(self.ALARM_FILE)
 
     def standby(self):
-        if self._playing:
-            self._playing = None
         self._engine.stop()
         self._amplifier.disable()
 
+        if self._playing:
+            self._playing = None
+
     def _start(self, name):
         log.info("Playing %s", name)
-        self._amplifier.enable()
 
-        if self._engine.is_playing:
-            self._engine.stop()
+        self._amplifier.enable()
 
         path = os.path.join('sounds', name)
         self._engine.start(path)

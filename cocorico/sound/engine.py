@@ -51,10 +51,13 @@ class Engine:
     def stop(self):
         if self._stream:
             self._stream.stop_stream()
+            self._stream.close()
+            self._stream = None
 
     def close(self):
         if self._pyaudio:
             log.info("Terminate PyAudio")
+            self.stop()
             self._pyaudio.terminate()
             self._pyaudio = None
 
