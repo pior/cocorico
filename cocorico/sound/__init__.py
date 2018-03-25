@@ -17,20 +17,17 @@ class Sound:
 
         self._playing = None
 
-    def for_startup(self):
+    def play_startup(self):
         self._start(self.STARTUP_FILE)
 
-    def for_alarm(self):
+    def play_alarm(self):
         if self._playing == self.ALARM_FILE and self._engine.is_playing():
             return
         self._start(self.ALARM_FILE)
 
-    def standby(self):
-        self._engine.stop()
-        self._amplifier.disable()
-
-        if self._playing:
-            self._playing = None
+    def refresh(self):
+        if not self._engine.is_playing():
+            self.stop()
 
     def _start(self, name):
         log.info("Playing %s", name)
@@ -41,3 +38,8 @@ class Sound:
         self._engine.start(path)
 
         self._playing = name
+
+    def stop(self):
+        self._engine.stop()
+        self._amplifier.disable()
+        self._playing = None

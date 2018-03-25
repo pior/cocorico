@@ -23,16 +23,16 @@ class App():
         self.alarm_settings = AlarmSettings()
         self.alarm = Alarm(clock=self.clock, settings=self.alarm_settings)
 
-        self.btn_up = Button(pin=23, callback=self.btn_up_cb)
-        self.btn_down = Button(pin=22, callback=self.btn_down_cb)
-        self.btn_onoff = Button(pin=17, callback=self.btn_onoff_cb)
-        self.btn_snooze = Button(pin=27, callback=self.btn_snooze_cb)
+        self.btn_up = Button(pin=23, callback=self.action_up)
+        self.btn_down = Button(pin=22, callback=self.action_down)
+        self.btn_onoff = Button(pin=17, callback=self.action_onoff)
+        self.btn_snooze = Button(pin=27, callback=self.action_snooze)
         log.info('Initialized.')
 
     def run(self):
         log.info('Running...')
 
-        self.sound.for_startup()
+        self.sound.play_startup()
 
         while True:
             self.periodic_routine()
@@ -46,6 +46,7 @@ class App():
             self.state.set_alarm()
 
         self.light.refresh()
+        self.sound.refresh()
         self.refresh()
 
     def refresh(self):
@@ -59,11 +60,10 @@ class App():
             else:
                 text = ''
             self.display.as_clock(self.clock.time, text)
-            self.sound.standby()
 
         elif state == State.ALARM:
             self.display.as_clock(self.clock.time, ' /!\ ALARM /!\\')
-            self.sound.for_alarm()
+            self.sound.play_alarm()
 
         elif state == State.ALARM_TIME:
             self.display.as_clock(self.alarm_settings.time, 'SET TIME')
@@ -72,11 +72,12 @@ class App():
             log.error('Unknown state %s', state)
 
     def do_alarm_ack(self):
+        self.sound.stop()
         self.alarm.ack()
         self.state.set_clock()
         self.refresh()
 
-    def btn_up_cb(self):
+    def action_up(self):
         if self.state.is_alarm():
             self.do_alarm_ack()
             return
@@ -85,7 +86,7 @@ class App():
         self.state.set_alarm_time()
         self.refresh()
 
-    def btn_down_cb(self):
+    def action_down(self):
         if self.state.is_alarm():
             self.do_alarm_ack()
             return
@@ -94,14 +95,14 @@ class App():
         self.state.set_alarm_time()
         self.refresh()
 
-    def btn_onoff_cb(self):
+    def action_onoff(self):
         if self.state.is_alarm():
             self.do_alarm_ack()
             return
         self.alarm_settings.toggle()
         self.refresh()
 
-    def btn_snooze_cb(self):
+    def action_snooze(self):
         if self.state.is_alarm():
             self.do_alarm_ack()
             return
