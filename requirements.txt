@@ -1,3 +1,0 @@
-luma.oled
-pytz
-pyaudio

@@ -6,11 +6,9 @@ RUN apt-get update && apt-get install -yq \
 
 WORKDIR /app
 
-# Cache some python packages build
-RUN pip --disable-pip-version-check --no-cache-dir install Pillow RPi.GPIO
-
-COPY ./requirements.txt ./requirements-target.txt /tmp/
-RUN pip --disable-pip-version-check --no-cache-dir install -r /tmp/requirements.txt -r /tmp/requirements-target.txt
+COPY ./Pipfile* ./requirements-target.txt ./
+RUN pip --disable-pip-version-check --no-cache-dir install pipenv -r requirements-target.txt \
+    pipenv install --system --deploy
 
 COPY . ./
 
