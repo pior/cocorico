@@ -16,6 +16,10 @@ class Engine:
 
         self._show_devices_info()
         self._device_id = self._find_device_id()
+        if self._device_id is None:
+            log.warning("Failed to find allowed sound device")
+        else:
+            log.info("Found desired device as device_id %s", self._device_id)
 
         atexit.register(self.close)
 
@@ -78,4 +82,3 @@ class Engine:
         for device_info in self._get_devices_info():
             if device_info['name'] in allowed:
                 return device_info['index']
-        log.warning("Failed to find allowed sound device")

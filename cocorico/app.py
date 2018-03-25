@@ -11,7 +11,6 @@ from .clock import Alarm, AlarmSettings, Clock
 log = logging.getLogger(__name__)
 
 
-
 class App():
     def __init__(self):
         log.info('Initializing...')

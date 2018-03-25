@@ -7,19 +7,19 @@ class Amplifier:
     SHUTDOWN_PIN = 4  # BCM pin 4
 
     def __init__(self):
-        GPIO.setup(self.SHUTDOWN_PIN, GPIO.OUT, initial=GPIO.HIGH)
+        GPIO.setup(self.SHUTDOWN_PIN, GPIO.OUT, initial=GPIO.LOW)
         self._active = False
 
         atexit.register(self.close)
 
     def enable(self):
         if not self._active:
-            GPIO.output(self.SHUTDOWN_PIN, GPIO.LOW)
+            GPIO.output(self.SHUTDOWN_PIN, GPIO.HIGH)
             self._active = True
 
     def disable(self):
         if self._active:
-            GPIO.output(self.SHUTDOWN_PIN, GPIO.HIGH)
+            GPIO.output(self.SHUTDOWN_PIN, GPIO.LOW)
             self._active = False
 
     def close(self):
