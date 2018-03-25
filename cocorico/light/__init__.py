@@ -1,13 +1,22 @@
 from .leds import RGBLeds
-from .colors import wheel
+from . import colors
 
 
 class Light:
     def __init__(self):
         self._leds = RGBLeds(24)
-        self._wheel = wheel()
+        self.off()
+        # self._wheel = wheel()
 
-    def refresh(self):
-        new_color = next(self._wheel)
-        self._leds.set_all(new_color)
+    # def refresh(self):
+    #     new_color = next(self._wheel)
+    #     self._leds.set_all(new_color)
+    #     self._leds.refresh()
+
+    def off(self):
+        self._leds.set_all(colors.White)
+        self._leds.refresh()
+
+    def on(self):
+        self._leds.set_all(colors.White)
         self._leds.refresh()
