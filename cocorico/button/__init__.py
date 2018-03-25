@@ -39,7 +39,6 @@ class Button:
 
         self._in_interrupt = True
 
-        # Stupid debouncing for a start (blocking for 10ms)
         for _ in range(10):
             # time.sleep(0.001)
             if not self._pressed():
