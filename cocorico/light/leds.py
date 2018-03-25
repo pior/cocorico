@@ -1,25 +1,10 @@
 import time
 import logging
 
-# import gpiozero
 from cocorico.hal.spi import SpiDev
 from . import colors
 
 log = logging.getLogger(__name__)
-
-
-# def blinking_led_loop():
-#     led1 = gpiozero.LED(22)
-#     led2 = gpiozero.LED(23)
-
-#     state = False
-
-#     while True:
-#         state = not state
-#         # print(state)
-#         led1.value = state
-#         led2.value = not state
-#         time.sleep(0.2)
 
 
 def color_to_lpd8806(color):

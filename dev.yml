@@ -4,7 +4,7 @@ up:
 
 commands:
   run:
-    run: GPIOZERO_PIN_FACTORY=mock python -m cocorico
+    run: python -m cocorico
 
   push:
     run: (git add cocorico fonts sounds && git add -u && git commit -m 'autopush'); git push resin
