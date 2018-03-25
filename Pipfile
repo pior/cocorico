@@ -15,3 +15,6 @@ pillow = "*"
 
 [dev-packages]
 
+pytest = "*"
+pdbpp = "*"
+pytest-mock = "*"

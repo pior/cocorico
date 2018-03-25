@@ -99,3 +99,6 @@ class Clock:
     @property
     def time_str(self):
         return _time_format(self.time)
+
+    def with_values(self, **kwargs):
+        return self.now.replace(**kwargs)

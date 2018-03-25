@@ -1,3 +1,4 @@
+import atexit
 import time
 import logging
 
@@ -29,17 +30,16 @@ class App():
         self.btn_snooze = Button(pin=27, callback=self.action_snooze)
         log.info('Initialized.')
 
-    def run(self):
-        log.info('Running...')
+    def close(self):
+        log.info('Closing...')
+        self.sound.close()
 
-        self.sound.play_startup()
+    def routine(self, time_previous, time_now):
+        """Called each second to refresh the application state."""
 
-        while True:
-            self.periodic_routine()
-            time.sleep(1)
-
-    def periodic_routine(self):
-        # self.sound.shutdown_if_possible()
+        if time_previous is None:
+            self.sound.play_startup()
+            return
 
         if self.alarm.triggered:
             log.info('Triggered!')

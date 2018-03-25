@@ -16,9 +16,19 @@ class AutoConstants(type):
 
 class MockGPIO(metaclass=AutoConstants):
     _class_state = {}
+    __inputs_values = {}
 
     def __repr__(self):
         return "%s(%s)" % (self.__class__.__name__, self._class_state)
+
+    @classmethod
+    def input(cls, pin):
+        return cls.__inputs_values[pin].pop()
+
+    @classmethod
+    def _mock_set_input_values(cls, pin, values):
+        cls.__inputs_values[pin] = list(values)
+
 
 try:
     import RPi.GPIO as GPIO

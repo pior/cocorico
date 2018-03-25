@@ -8,3 +8,6 @@ commands:
 
   push:
     run: (git add cocorico fonts sounds && git add -u && git commit -m 'autopush'); git push resin
+
+  test:
+    run: pytest -v tests

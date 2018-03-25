@@ -17,6 +17,10 @@ class Sound:
 
         self._playing = None
 
+    def close(self):
+        self._amplifier.close()
+        self._engine.close()
+
     def play_startup(self):
         self._start(self.STARTUP_FILE)
 

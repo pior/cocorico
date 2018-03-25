@@ -1,4 +1,3 @@
-import atexit
 import logging
 import wave
 
@@ -20,8 +19,6 @@ class Engine:
             log.warning("Failed to find allowed sound device")
         else:
             log.info("Found desired device as device_id %s", self._device_id)
-
-        atexit.register(self.close)
 
     def start(self, path):
         log.info("Start playback for %s", path)
@@ -55,7 +52,7 @@ class Engine:
             self._stream = None
 
     def close(self):
-        if self._pyaudio:
+        if self._pyaudio is not None:
             log.info("Terminate PyAudio")
             self.stop()
             self._pyaudio.terminate()
@@ -80,8 +77,11 @@ class Engine:
     def _find_device_id(self):
         allowed = [
             'C-Media USB Headphone Set: Audio (hw:1,0)',
+            'PXC 550',  # MacOs - headset
             'Built-in Output',  # MacOs
         ]
         for device_info in self._get_devices_info():
+            if device_info['maxOutputChannels'] < 2:
+                continue
             if device_info['name'] in allowed:
                 return device_info['index']
