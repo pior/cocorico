@@ -6,9 +6,13 @@ RUN apt-get update && apt-get install -yq \
 
 WORKDIR /app
 
-COPY ./Pipfile* ./requirements-target.txt ./
-RUN pip --disable-pip-version-check --no-cache-dir install pipenv -r requirements-target.txt && \
-    pipenv install --system --deploy
+RUN pip --disable-pip-version-check --no-cache-dir install pipenv
+
+COPY requirements-target.txt ./
+RUN pip --disable-pip-version-check --no-cache-dir install -r requirements-target.txt
+
+COPY Pipfile* ./
+RUN pipenv install --system --deploy
 
 COPY . ./
 
