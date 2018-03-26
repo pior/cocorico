@@ -13,7 +13,6 @@ class Amplifier:
     def __init__(self):
         GPIO.setup(self.SHUTDOWN_PIN, GPIO.OUT, initial=self.DISABLED)
 
-
     def enable(self):
         log.info("Enable amplifier")
         GPIO.output(self.SHUTDOWN_PIN, self.ENABLED)

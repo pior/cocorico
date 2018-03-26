@@ -25,7 +25,7 @@ class Sound:
         self._start(self.STARTUP_FILE)
 
     def play_alarm(self):
-        if self._playing == self.ALARM_FILE and self._engine.is_playing():
+        if self._playing == self.ALARM_FILE:  # and self._engine.is_playing():
             return
         self._start(self.ALARM_FILE)
 
