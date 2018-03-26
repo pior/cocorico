@@ -37,3 +37,6 @@ class RGBLeds:
 
     def set_all(self, color):
         self._pixel_buffer = [color] * self._led_count
+
+    def close(self):
+        self._spi.close()

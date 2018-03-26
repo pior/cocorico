@@ -29,6 +29,11 @@ class Sound:
             self._in_alarm = True
             self._start(self.ALARM_FILE)
 
+    def unset_alarm(self):
+        if self._in_alarm:
+            self._in_alarm = True
+            self.stop()
+
     def refresh(self):
         if self._in_alarm:
             if not self._engine.is_playing():

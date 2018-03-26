@@ -5,13 +5,6 @@ from . import colors
 class Light:
     def __init__(self):
         self._leds = RGBLeds(24)
-        self.off()
-        # self._wheel = wheel()
-
-    # def refresh(self):
-    #     new_color = next(self._wheel)
-    #     self._leds.set_all(new_color)
-    #     self._leds.refresh()
 
     def off(self):
         self._leds.set_all(colors.Off)
@@ -21,5 +14,12 @@ class Light:
         self._leds.set_all(colors.On)
         self._leds.refresh()
 
+    def set_alarm(self):
+        self.on()
+
+    def unset_alarm(self):
+        self.off()
+
     def close(self):
         self.off()
+        self._leds.close()

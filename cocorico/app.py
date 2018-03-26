@@ -62,11 +62,13 @@ class App():
             else:
                 text = ''
             self.display.as_clock(self.clock.time, text)
+            self.light.unset_alarm()
+            self.sound.unset_alarm()
 
         elif state == State.ALARM:
             self.display.as_clock(self.clock.time, ' /!\ ALARM /!\\')
             self.sound.set_alarm()
-            self.light.on()
+            self.light.set_alarm()
 
         elif state == State.ALARM_TIME:
             self.display.as_clock(self.alarm_settings.time, 'SET TIME')
@@ -75,8 +77,6 @@ class App():
             log.error('Unknown state %s', state)
 
     def do_alarm_ack(self):
-        self.light.off()
-        self.sound.stop()
         self.alarm.ack()
         self.state.set_clock()
         self.refresh()
