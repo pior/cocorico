@@ -1,18 +1,31 @@
-import atexit
 import datetime
-import time
 import logging
+import signal
+import sys
+import time
 
 from .app import App
 from .clock import Clock
 
 logging.basicConfig(level=logging.INFO)
+log = logging.getLogger(__name__)
 
 
 def main():
     app = App()
-    atexit.register(app.close)
 
+    def terminate(signum, _):
+        log.warning("Received signal %s", signum)
+        app.close()
+        sys.exit(0)
+
+    signal.signal(signal.SIGINT, terminate)
+    signal.signal(signal.SIGTERM, terminate)
+
+    run(app)
+
+
+def run(app):
     clock = Clock()
 
     time_previous = None
@@ -23,5 +36,6 @@ def main():
         time_previous = time_now
 
         time.sleep(1)  # There MUST be a better way 😏
+
 
 main()
