@@ -46,7 +46,7 @@ class Engine:
         self._stream.start_stream()
 
     def stop(self):
-        if self._stream:
+        if self._stream is not None:
             self._stream.stop_stream()
             self._stream.close()
             self._stream = None
@@ -59,7 +59,7 @@ class Engine:
             self._pyaudio = None
 
     def is_playing(self):
-        if not self._stream:
+        if self._stream is None:
             return False
         return self._stream.is_active()
 
@@ -79,6 +79,7 @@ class Engine:
             'C-Media USB Headphone Set: Audio (hw:1,0)',
             'PXC 550',  # MacOs - headset
             'Built-in Output',  # MacOs
+            'TESTDEVICE',
         ]
         for device_info in self._get_devices_info():
             if device_info['maxOutputChannels'] < 2:

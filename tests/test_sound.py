@@ -1,11 +1,19 @@
+import pytest
+
 from cocorico.sound import Sound
+from cocorico.hal.gpio import GPIO
 
 
-def test_just_api_calls(mocker):
-    m_engine = mocker.patch('cocorico.sound.Engine')
 
-    s = Sound()
 
+@pytest.fixture
+def s():
+    sound = Sound()
+    yield sound
+    sound.close()
+
+
+def test_just_api_calls(s, m_pyaudio):
     s.stop()
     s.play_startup()
     s.refresh()
@@ -17,28 +25,40 @@ def test_just_api_calls(mocker):
     s.close()
 
 
-def test_play(mocker):
-    m_engine_class = mocker.patch('cocorico.sound.Engine')
-
-    s = Sound()
-    m_engine_class.assert_called_once_with()
-    m_engine = m_engine_class.return_value
-
+def test_engine(s, mocker, m_pyaudio):
     s.play_startup()
-    assert m_engine.start.called
+
+    assert m_pyaudio.open.called
+
+    stream = m_pyaudio.open.return_value
+    assert stream.start_stream.called
 
     s.stop()
-    assert m_engine.stop.called
+    assert stream.stop_stream.called
+    assert stream.close.called
+
+    m_pyaudio.reset_mock()
+    s.stop()
+    assert not stream.stop_stream.called
 
 
-def test_close(mocker):
-    m_pyaudio = mocker.patch('cocorico.sound.engine.pyaudio')
+def test_amplifier(s):
+    assert GPIO._outputs_values[4] == GPIO.HIGH
 
-    s = Sound()
+    s.play_startup()
+    assert GPIO._outputs_values[4] == GPIO.LOW
+
+    s.stop()
+    assert GPIO._outputs_values[4] == GPIO.HIGH
+
+
+def test_close(s, mocker, m_pyaudio):
     s.play_startup()
 
     m_pyaudio.reset_mock()
 
     s.close()
 
-    assert m_pyaudio.mock_calls == [mocker.call.PyAudio().terminate()]
+    m_stream = mocker.call.open()
+    expected = [m_stream.stop_stream(), m_stream.close(), mocker.call.terminate()]
+    assert m_pyaudio.mock_calls == expected
