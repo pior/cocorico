@@ -33,6 +33,8 @@ class App():
     def close(self):
         log.info('Closing...')
         self.sound.close()
+        self.light.close()
+        self.display.close()
 
     def routine(self, time_previous, time_now):
         """Called each second to refresh the application state."""

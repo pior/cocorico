@@ -34,3 +34,6 @@ class Display:
         with canvas(self._device) as draw:
             draw.text((0, 0), text, font=self._clock_font, fill="white")
             draw.text((0, 42), subtext, font=self._text_font, fill="white")
+
+    def close(self):
+        self._device.clear()

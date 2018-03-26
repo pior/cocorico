@@ -34,18 +34,19 @@ class Button:
         log.info("%r: event channel=%s", self, channel)
 
         if self._in_interrupt:
-            log.info("%r: ignore interrupt during interrupt handling")
+            log.info("%r: ignore interrupt during interrupt handling", self)
             return
 
         self._in_interrupt = True
+        try:
+            for _ in range(10):
+                # time.sleep(0.001)
+                if not self._pressed():
+                    log.info("%r: ignore bounce", self)
+                    return
+        finally:
+            self._in_interrupt = False
 
-        for _ in range(10):
-            # time.sleep(0.001)
-            if not self._pressed():
-                log.info("%r: ignore bounce", self)
-                return
-
-        self._in_interrupt = False
         self._call_callback()
 
     def _call_callback(self):

@@ -20,3 +20,6 @@ class Light:
     def on(self):
         self._leds.set_all(colors.White)
         self._leds.refresh()
+
+    def close(self):
+        self.off()
