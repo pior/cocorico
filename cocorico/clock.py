@@ -44,7 +44,7 @@ class Alarm:
 
 
 class AlarmSettings:
-    def __init__(self, increment=1):
+    def __init__(self, increment=15):
         soonish = Clock().now + datetime.timedelta(minutes=2)
         self._time = (soonish.hour, soonish.minute)  # For testing, set it soonish
 
