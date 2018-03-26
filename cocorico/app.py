@@ -38,6 +38,7 @@ class App():
         """Called each second to refresh the application state."""
 
         if time_previous is None:
+            self.light.off()
             self.sound.play_startup()
             return
 
