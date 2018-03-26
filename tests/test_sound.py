@@ -41,16 +41,6 @@ def test_engine(s, mocker, m_pyaudio):
     assert not stream.stop_stream.called
 
 
-def test_amplifier(s):
-    assert GPIO._outputs_values[4] == GPIO.LOW
-
-    s.play_startup()
-    assert GPIO._outputs_values[4] == GPIO.HIGH
-
-    s.stop()
-    assert GPIO._outputs_values[4] == GPIO.LOW
-
-
 def test_close(s, mocker, m_pyaudio):
     s.play_startup()
 
