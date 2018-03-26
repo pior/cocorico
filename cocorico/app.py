@@ -27,7 +27,8 @@ class App():
         self.btn_up = Button(pin=23, callback=self.action_up)
         self.btn_down = Button(pin=22, callback=self.action_down)
         self.btn_onoff = Button(pin=17, callback=self.action_onoff)
-        self.btn_snooze = Button(pin=27, callback=self.action_snooze)
+        self.btn_stop = Button(pin=27, callback=self.action_stop)
+        self.btn_snooze = Button(pin=26, callback=self.action_snooze)
         log.info('Initialized.')
 
     def close(self):
@@ -105,6 +106,11 @@ class App():
             return
         self.alarm_settings.toggle()
         self.refresh()
+
+    def action_stop(self):
+        if self.state.is_alarm():
+            self.do_alarm_ack()
+            return
 
     def action_snooze(self):
         if self.state.is_alarm():
