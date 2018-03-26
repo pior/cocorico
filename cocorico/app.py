@@ -63,7 +63,7 @@ class App():
 
         elif state == State.ALARM:
             self.display.as_clock(self.clock.time, ' /!\ ALARM /!\\')
-            self.sound.play_alarm()
+            self.sound.set_alarm()
             self.light.on()
 
         elif state == State.ALARM_TIME:
