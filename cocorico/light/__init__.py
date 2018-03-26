@@ -14,11 +14,11 @@ class Light:
     #     self._leds.refresh()
 
     def off(self):
-        self._leds.set_all(colors.White)
+        self._leds.set_all(colors.Off)
         self._leds.refresh()
 
     def on(self):
-        self._leds.set_all(colors.White)
+        self._leds.set_all(colors.On)
         self._leds.refresh()
 
     def close(self):
