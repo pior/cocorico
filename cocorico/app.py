@@ -4,6 +4,7 @@ import logging
 
 from .light import Light
 from .display import Display
+from .lux import Lux
 from .sound import Sound
 from .state import State
 from .button import Button
@@ -18,6 +19,7 @@ class App():
         self.display = Display()
         self.sound = Sound()
         self.light = Light()
+        self.lux = Lux()
 
         self.state = State()
         self.clock = Clock()
@@ -51,6 +53,9 @@ class App():
 
         self.sound.refresh()
         self.ui_refresh()
+
+        lux = self.lux.read()
+        log.info("Lux = %s", lux)
 
     def ui_refresh(self):
         state = self.state.get()
