@@ -50,9 +50,9 @@ class App():
             self.state.set_alarm()
 
         self.sound.refresh()
-        self.refresh()
+        self.ui_refresh()
 
-    def refresh(self):
+    def ui_refresh(self):
         state = self.state.get()
         log.info('State = %s', state)
 
@@ -80,7 +80,7 @@ class App():
     def do_alarm_ack(self):
         self.alarm.ack()
         self.state.set_clock()
-        self.refresh()
+        self.ui_refresh()
 
     def action_up(self):
         if self.state.is_alarm():
@@ -89,7 +89,7 @@ class App():
         self.alarm_settings.up()
         self.alarm_settings.set()
         self.state.set_alarm_time()
-        self.refresh()
+        self.ui_refresh()
 
     def action_down(self):
         if self.state.is_alarm():
@@ -98,14 +98,14 @@ class App():
         self.alarm_settings.down()
         self.alarm_settings.set()
         self.state.set_alarm_time()
-        self.refresh()
+        self.ui_refresh()
 
     def action_onoff(self):
         if self.state.is_alarm():
             self.do_alarm_ack()
             return
         self.alarm_settings.toggle()
-        self.refresh()
+        self.ui_refresh()
 
     def action_stop(self):
         if self.state.is_alarm():
