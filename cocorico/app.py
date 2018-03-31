@@ -2,13 +2,13 @@ import atexit
 import time
 import logging
 
-from .light import Light
+from .button import Button
+from .clock import Alarm, AlarmSettings, Clock
 from .display import Display
+from .light import Light
 from .lux import Lux
 from .sound import Sound
 from .state import State
-from .button import Button
-from .clock import Alarm, AlarmSettings, Clock
 
 log = logging.getLogger(__name__)
 
