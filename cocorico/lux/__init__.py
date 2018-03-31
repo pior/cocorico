@@ -4,7 +4,7 @@ from cocorico.lib.tsl2591 import Tsl2591
 
 class Lux:
     def __init__(self):
-        bus = SMBus(0)
+        bus = SMBus(1)
         self._sensor = Tsl2591(bus)
 
     def read(self):
