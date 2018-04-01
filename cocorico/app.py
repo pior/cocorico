@@ -57,7 +57,7 @@ class App():
         state = self.state.get()
         log.info('State = %s', state)
 
-        if state == State.CLOCK:  # STANDBY
+        if state == State.STANDBY:
             text = ''
             if self.alarm_settings.active:
                 text = '     %s' % self.alarm_settings.time.strftime('%H:%M')
@@ -85,7 +85,7 @@ class App():
 
     def do_alarm_ack(self):
         self.alarm.ack()
-        self.state.set_clock()
+        self.state.set_standby()
         self.refresh()
 
     def action_up(self):
