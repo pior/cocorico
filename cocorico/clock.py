@@ -10,7 +10,7 @@ class Alarm:
     def __init__(self, clock, settings):
         self._settings = settings
         self._clock = clock
-        self._triggered = False
+        self._trigger_time = None
         self._ack_time = clock.now
 
     @property
@@ -32,22 +32,23 @@ class Alarm:
     @property
     def triggered(self):
         if not self._settings.active:
-            self._triggered = False
-        elif not self._triggered:
-            if self._clock.now > self.effective_time:
-                self._triggered = True
-        return self._triggered
+            self._trigger_time = None
+        elif self._trigger_time is None:
+            now = self._clock.now
+            if now > self.effective_time:
+                self._trigger_time = now
+        return self._trigger_time is not None
 
     @property
     def rampup_position(self, rampup_time=300):
-        if not self.triggered:
+        if self._trigger_time is None:
             return
-        elapsed = self._clock.now - self.effective_time
-        return min(1, elapsed.total_seconds() / rampup_time)
+        since_trigger = self._clock.now - self._trigger_time
+        return min(1, since_trigger.total_seconds() / rampup_time)
 
     def ack(self):
         self._ack_time = self._clock.now
-        self._triggered = False
+        self._trigger_time = None
 
 
 class CyclicTime:
