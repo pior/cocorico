@@ -105,29 +105,22 @@ class Tsl2591(object):
         if ch0 == 0xFFFF or ch1 == 0xFFFF:  # overflow?
             log.error("overflow!")
             return 10000  # Some big value is less wrong than zero
-
-        log.info("ch0=%s ch1=%s", ch0, ch1)
+        log.debug("ch0=%s ch1=%s", ch0, ch1)
 
         integration_time = INTEGRATIONTIME_TO_MS.get(self._integration_time, 100)
         gain = GAIN_TO_VALUE.get(self._gain, 1)
-        log.info("integration_time=%s gain=%s", integration_time, gain)
+        log.debug("integration_time=%s gain=%s", integration_time, gain)
 
         cpl = float(integration_time) * float(gain) / LUX_DF
-        log.info("cpl=%s", cpl)
+        log.debug("cpl=%s", cpl)
 
-        # lux1 = (full - (LUX_COEFB * ir)) / cpl
-        # lux2 = ((LUX_COEFC * full) - (LUX_COEFD * ir)) / cpl
-        # The highest value is the approximate lux equivalent
-        # lux = max([lux1, lux2])
-
-        # lux = ( ((float)ch0 - (float)ch1 )) * (1.0F - ((float)ch1/(float)ch0) ) / cpl;
         ch0, ch1 = float(ch0), float(ch1)
         lux = (ch0 - ch1) * (1.0 - (ch1 / ch0)) / cpl
         return lux
 
     def get_full_luminosity(self):
         self._enable()
-        time.sleep(0.120*self._integration_time+1)  # not sure if we need it "// Wait x ms for ADC to complete"
+        time.sleep(0.120 * (self._integration_time + 1))
         ch0 = self._bus.read_word_data(self._i2c_address, COMMAND_BIT | REGISTER_CHAN0_LOW)
         ch1 = self._bus.read_word_data(self._i2c_address, COMMAND_BIT | REGISTER_CHAN1_LOW)
         self._disable()
