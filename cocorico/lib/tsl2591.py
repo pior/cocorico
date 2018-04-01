@@ -85,7 +85,7 @@ class Tsl2591(object):
         self._i2c_address = sensor_address
 
         self._integration_time = INTEGRATIONTIME_100MS
-        self._gain = GAIN_LOW
+        self._gain = GAIN_MED
         self.set_timing(self._integration_time)
         self.set_gain(self._gain)
         self._disable()
