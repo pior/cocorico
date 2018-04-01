@@ -35,11 +35,11 @@ def run(app):
     while True:
         time_now = clock.now
         app.routine(time_previous, time_now)
-
         time_previous = time_now
 
-        td = clock.now + datetime.timedelta(seconds=1) - time_previous
-        time.sleep(td.total_seconds())
+        next_time = time_previous + datetime.timedelta(seconds=1)
+        delta = next_time - clock.now
+        time.sleep(delta.total_seconds())
 
 
 main()
