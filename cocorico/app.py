@@ -78,9 +78,11 @@ class App():
             self.display.as_clock(self.clock.time, ' /!\ ALARM /!\\')
             self.sound.set_alarm()
             self.light.set_alarm()
+            self.display.show()
 
         elif state == State.ALARM_TIME:
             self.display.as_clock(self.alarm_settings.time, 'SET TIME')
+            self.display.show()
 
         else:
             log.error('Unknown state %s', state)
