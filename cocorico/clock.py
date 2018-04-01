@@ -80,7 +80,7 @@ class CyclicTime:
 
 class AlarmSettings:
     def __init__(self, increment=10):
-        soonish = Clock().now + datetime.timedelta(minutes=2)
+        soonish = Clock().now + datetime.timedelta(minutes=1)
         self._time = CyclicTime.create_from(soonish)  # For testing, set it soonish
 
         self._time_update = CyclicTime.create_from(self._time)

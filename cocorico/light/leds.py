@@ -29,14 +29,13 @@ class RGBLeds:
         data += [0x00] * 3  # Commit sequecnce: words with MSB cleared
         self._spi.xfer(data)
 
-    # def set_pixel(self, pixel, color):
-    #     if 0 <= pixel < self._led:
-    #         self._pixel_buffer[pixel * 3: (pixel + 1) * 3] = color_to_lpd8806(color)
-    #     else:
-    #         log.info('Invalid pixel %s on %s strip', pixel, self._led)
-
     def set_all(self, color):
         self._pixel_buffer = [color] * self._led_count
+
+    def set_white(self, kelvin, brightness):
+        color = colors.from_kelvin(kelvin, brightness)
+        log.info("Set white: kelvin=%s brightness=%s color=%s", kelvin, brightness, color)
+        self.set_all(color)
 
     def close(self):
         self._spi.close()

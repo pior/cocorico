@@ -1,14 +1,93 @@
+import colorsys
+import math
+
 
 class Color:
     def __init__(self, red, green, blue):
-        self._bytes = [red, green, blue]
+        self._bytes = [_clamp(red), _clamp(green), _clamp(blue)]
 
     @property
     def raw(self):
         return self._bytes
 
+
+
     def __repr__(self):
         return "Color(%s)" % self._bytes
+
+
+def _clamp(value):
+    return min(255, max(0, int(value)))
+
+
+def from_hsv(hue, saturation, value):
+    red, green, blue = colorsys.hsv_to_rgb(hue, saturation, value)
+    return Color(red, green, blue)
+
+
+def from_kelvin(kelvin, brightness):
+    red, green, blue = convert_kelvin_to_rgb(kelvin)
+    return Color(red * brightness, green * brightness, blue * brightness)
+
+
+def convert_kelvin_to_rgb(colour_temperature):
+    """
+    Converts from K to RGB, algorithm courtesy of
+    http://www.tannerhelland.com/4435/convert-temperature-rgb-algorithm-code/
+    """
+    #range check
+    if colour_temperature < 1000:
+        colour_temperature = 1000
+    elif colour_temperature > 40000:
+        colour_temperature = 40000
+
+    tmp_internal = colour_temperature / 100.0
+
+    # red
+    if tmp_internal <= 66:
+        red = 255
+    else:
+        tmp_red = 329.698727446 * math.pow(tmp_internal - 60, -0.1332047592)
+        if tmp_red < 0:
+            red = 0
+        elif tmp_red > 255:
+            red = 255
+        else:
+            red = tmp_red
+
+    # green
+    if tmp_internal <=66:
+        tmp_green = 99.4708025861 * math.log(tmp_internal) - 161.1195681661
+        if tmp_green < 0:
+            green = 0
+        elif tmp_green > 255:
+            green = 255
+        else:
+            green = tmp_green
+    else:
+        tmp_green = 288.1221695283 * math.pow(tmp_internal - 60, -0.0755148492)
+        if tmp_green < 0:
+            green = 0
+        elif tmp_green > 255:
+            green = 255
+        else:
+            green = tmp_green
+
+    # blue
+    if tmp_internal >=66:
+        blue = 255
+    elif tmp_internal <= 19:
+        blue = 0
+    else:
+        tmp_blue = 138.5177312231 * math.log(tmp_internal - 10) - 305.0447927307
+        if tmp_blue < 0:
+            blue = 0
+        elif tmp_blue > 255:
+            blue = 255
+        else:
+            blue = tmp_blue
+
+    return red, green, blue
 
 
 def wheel(infinite=True):

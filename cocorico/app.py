@@ -74,7 +74,7 @@ class App():
             self.display.as_clock(self.clock.time, '>>> REVEIL! <<<')
             if progression > 0.50:
                 self.sound.set_alarm()
-            self.light.set_alarm()
+            self.light.set_alarm(progression)
             self.display.show()
 
         elif state == State.ALARM_TIME:

@@ -14,8 +14,9 @@ class Light:
         self._leds.set_all(colors.On)
         self._leds.refresh()
 
-    def set_alarm(self):
-        self.on()
+    def set_alarm(self, progression):
+        brightness = min(1, progression * 2)
+        self._leds.set_white(4000, brightness)
 
     def unset_alarm(self):
         self.off()
