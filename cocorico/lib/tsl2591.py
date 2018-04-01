@@ -59,127 +59,99 @@ GAIN_MED = 0x10  # medium gain (25x)
 GAIN_HIGH = 0x20  # medium gain (428x)
 GAIN_MAX = 0x30  # max gain (9876x)
 
+INTEGRATIONTIME_TO_MS = {
+    INTEGRATIONTIME_100MS: 100.,
+    INTEGRATIONTIME_200MS: 200.,
+    INTEGRATIONTIME_300MS: 300.,
+    INTEGRATIONTIME_400MS: 400.,
+    INTEGRATIONTIME_500MS: 500.,
+    INTEGRATIONTIME_600MS: 600.,
+}
+
+GAIN_TO_VALUE = {
+    GAIN_LOW: 1.,
+    GAIN_MED: 25.,
+    GAIN_HIGH: 428.,
+    GAIN_MAX: 9876.,
+}
+
 
 class Tsl2591(object):
-    def __init__(
-                 self,
-                 bus,
-                 sensor_address=0x29,
-                 integration=INTEGRATIONTIME_100MS,
-                 gain=GAIN_LOW,
-                 ):
-        self.bus = bus
-        self.sendor_address = sensor_address
-        self.integration_time = integration
-        self.gain = gain
-        self.set_timing(self.integration_time)
-        self.set_gain(self.gain)
-        self.disable()  # to be sure
+    def __init__(self, bus, sensor_address=0x29):
+        self._bus = bus
+        self._i2c_address = sensor_address
+
+        self._integration_time = INTEGRATIONTIME_100MS
+        self._gain = GAIN_LOW
+        self.set_timing(self._integration_time)
+        self.set_gain(self._gain)
+        self._disable()
 
     def set_timing(self, integration):
-        self.enable()
-        self.integration_time = integration
-        self.bus.write_byte_data(
-                    self.sendor_address,
-                    COMMAND_BIT | REGISTER_CONTROL,
-                    self.integration_time | self.gain
-                    )
-        self.disable()
-
-    def get_timing(self):
-        return self.integration_time
+        self._integration_time = integration
+        self._write_control(self._integration_time | self._gain)
 
     def set_gain(self, gain):
-        self.enable()
-        self.gain = gain
-        self.bus.write_byte_data(
-                    self.sendor_address,
-                    COMMAND_BIT | REGISTER_CONTROL,
-                    self.integration_time | self.gain
-                    )
-        self.disable()
+        self._gain = gain
+        self._write_control(self._integration_time | self._gain)
 
     def get_gain(self):
-        return self.gain
+        return self._gain
 
-    def calculate_lux(self, full, ir):
-        # Check for overflow conditions first
-        if (full == 0xFFFF) | (ir == 0xFFFF):
-            return 0
+    def calculate_lux(self, ch0, ch1):
+        if ch0 == 0xFFFF or ch1 == 0xFFFF:  # overflow?
+            log.error("overflow!")
+            return 10000  # Some big value is less wrong than zero
 
-        case_integ = {
-            INTEGRATIONTIME_100MS: 100.,
-            INTEGRATIONTIME_200MS: 200.,
-            INTEGRATIONTIME_300MS: 300.,
-            INTEGRATIONTIME_400MS: 400.,
-            INTEGRATIONTIME_500MS: 500.,
-            INTEGRATIONTIME_600MS: 600.,
-            }
-        if self.integration_time in case_integ.keys():
-            atime = case_integ[self.integration_time]
-        else:
-            atime = 100.
+        atime = INTEGRATIONTIME_TO_MS.get(self._integration_time, 100)
+        again = GAIN_TO_VALUE.get(self._gain, 1.0)
 
-        case_gain = {
-            GAIN_LOW: 1.,
-            GAIN_MED: 25.,
-            GAIN_HIGH: 428.,
-            GAIN_MAX: 9876.,
-            }
-
-        if self.gain in case_gain.keys():
-            again = case_gain[self.gain]
-        else:
-            again = 1.
-
-        # cpl = (ATIME * AGAIN) / DF
         cpl = (atime * again) / LUX_DF
-        lux1 = (full - (LUX_COEFB * ir)) / cpl
 
-        lux2 = ((LUX_COEFC * full) - (LUX_COEFD * ir)) / cpl
-
+        # lux1 = (full - (LUX_COEFB * ir)) / cpl
+        # lux2 = ((LUX_COEFC * full) - (LUX_COEFD * ir)) / cpl
         # The highest value is the approximate lux equivalent
-        return max([lux1, lux2])
+        # lux = max([lux1, lux2])
 
-    def enable(self):
-        self.bus.write_byte_data(
-                    self.sendor_address,
-                    COMMAND_BIT | REGISTER_ENABLE,
-                    ENABLE_POWERON | ENABLE_AEN | ENABLE_AIEN
-                    )  # Enable
-
-    def disable(self):
-        self.bus.write_byte_data(
-                    self.sendor_address,
-                    COMMAND_BIT | REGISTER_ENABLE,
-                    ENABLE_POWEROFF
-                    )
+        # lux = ( ((float)ch0 - (float)ch1 )) * (1.0F - ((float)ch1/(float)ch0) ) / cpl;
+        ch0, ch1 = float(ch0), float(ch1)
+        lux = (ch0 - ch1) * (1.0 - (ch1 / ch0)) / cpl
+        return lux
 
     def get_full_luminosity(self):
-        self.enable()
-        time.sleep(0.120*self.integration_time+1)  # not sure if we need it "// Wait x ms for ADC to complete"
-        full = self.bus.read_word_data(
-                    self.sendor_address, COMMAND_BIT | REGISTER_CHAN0_LOW
-                    )
-        ir = self.bus.read_word_data(
-                    self.sendor_address, COMMAND_BIT | REGISTER_CHAN1_LOW
-                    )
-        self.disable()
-        return full, ir
+        self._enable()
+        time.sleep(0.120*self._integration_time+1)  # not sure if we need it "// Wait x ms for ADC to complete"
+        ch0 = self._bus.read_word_data(self._i2c_address, COMMAND_BIT | REGISTER_CHAN0_LOW)
+        ch1 = self._bus.read_word_data(self._i2c_address, COMMAND_BIT | REGISTER_CHAN1_LOW)
+        self._disable()
+        return ch0, ch1
 
-    def get_luminosity(self, channel):
-        full, ir = self.get_full_luminosity()
-        if channel == FULLSPECTRUM:
-            # Reads two byte value from channel 0 (visible + infrared)
-            return full
-        elif channel == INFRARED:
-            # Reads two byte value from channel 1 (infrared)
-            return ir
-        elif channel == VISIBLE:
-            # Reads all and subtracts out ir to give just the visible!
-            return full - ir
-        else: # unknown channel!
-            return 0
+    def measure_lux(self):
+        ch0, ch1 = self.get_full_luminosity()
+        return self.calculate_lux(ch0, ch1)
+
+    def _enable(self):
+        self._bus.write_byte_data(self._i2c_address, COMMAND_BIT | REGISTER_ENABLE,
+            ENABLE_POWERON | ENABLE_AEN | ENABLE_AIEN)
+
+    def _disable(self):
+        self._bus.write_byte_data(self._i2c_address, COMMAND_BIT | REGISTER_ENABLE,
+            ENABLE_POWEROFF)
+
+    def _write_control(self, value):
+        self._enable()
+        self._bus.write_byte_data(self._i2c_address, COMMAND_BIT | REGISTER_CONTROL, value)
+        self._disable()
+
+    # def get_luminosity(self, channel):
+    #     ch0, ch1 = self.get_full_luminosity()
+    #     if channel == FULLSPECTRUM:
+    #         return ch0
+    #     elif channel == INFRARED:
+    #         return ch1
+    #     elif channel == VISIBLE:
+    #         return ch0 - ch1
+    #     return 0
 
 
 # if __name__ == '__main__':
