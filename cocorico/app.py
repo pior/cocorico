@@ -50,7 +50,6 @@ class App():
 
         self.sound.refresh()
         self.refresh()
-
         log.info("%s", self.lux)
 
     def refresh(self):
@@ -60,7 +59,7 @@ class App():
         if state == State.STANDBY:
             text = ''
             if self.alarm_settings.active:
-                text = '     %s' % self.alarm_settings.time.strftime('%H:%M')
+                text = self.alarm_settings.time.strftime('     %H:%M     ')
 
             self.display.as_clock(self.clock.time, text)
             self.light.unset_alarm()

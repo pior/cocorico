@@ -1,4 +1,5 @@
 import datetime
+from typing import NamedTuple
 
 import pytz
 
@@ -43,13 +44,41 @@ class Alarm:
         self._triggered = False
 
 
+class CyclicTime:
+    def __init__(self, hour, minute):
+        self.hour = hour
+        self.minute = minute
+
+    @classmethod
+    def create_from(cls, other):
+        return cls(other.hour, other.minute)
+
+    def copy_from(self, other):
+        self.hour, self.minute = other.hour, other.minute
+
+    def as_time(self):
+        return datetime.time(hour=self.hour, minute=self.minute)
+
+    def relative_set(self, delta_minutes, step_minutes):
+        assert delta_minutes <= 60, 'Not supporting more than 60min of increment'
+
+        minute = self.minute + delta_minutes
+        hour = self.hour
+        if minute >= 60:
+            hour += 1
+        if minute < 0:
+            hour -= 1
+        self.minute = ((minute % 60) // step_minutes) * step_minutes
+        self.hour = hour % 24
+
+
 class AlarmSettings:
     def __init__(self, increment=10):
         soonish = Clock().now + datetime.timedelta(minutes=2)
-        self._time = (soonish.hour, soonish.minute)  # For testing, set it soonish
+        self._time = CyclicTime.create_from(soonish)  # For testing, set it soonish
 
-        self._time_update = self._time
-        self._increment = min(60, increment)  # > 60 is not supported
+        self._time_update = CyclicTime.create_from(self._time)
+        self._increment = increment
         self.active = True
 
     def toggle(self):
@@ -57,31 +86,20 @@ class AlarmSettings:
 
     @property
     def time(self):
-        return datetime.time(hour=self._time[0], minute=self._time[1])
+        return self._time.as_time()
 
     @property
     def time_update(self):
-        return datetime.time(hour=self._time_update[0], minute=self._time_update[1])
+        return self._time_update.as_time()
 
     def up(self):
-        hour, minute = self._time_update
-        minute = minute + self._increment
-        if minute >= 60:
-            hour += 1
-        self._time_update = (hour % 60, minute % 60)
+        self._time_update.relative_set(self._increment, self._increment)
 
     def down(self):
-        hour, minute = self._time_update
-        minute -= self._increment
-        if minute < 0:
-            hour -= 1
-            minute += 60
-        if hour < 0:
-            hour += 23
-        self._time_update = (hour, minute)
+        self._time_update.relative_set(-self._increment, self._increment)
 
     def set(self):
-        self._time = self._time_update
+        self._time.copy_from(self._time_update)
 
 
 class Clock:
