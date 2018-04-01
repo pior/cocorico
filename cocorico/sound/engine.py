@@ -66,7 +66,7 @@ class Engine:
     def _show_devices_info(self):
         from pprint import pformat
         for device_info in self._get_devices_info():
-            log.info(pformat(device_info))
+            log.debug(pformat(device_info))
 
     def _get_devices_info(self):
         return [

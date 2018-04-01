@@ -8,10 +8,10 @@ class MockSMBus:
         self._bus = bus
 
     def write_byte_data(self, i2c_addr, register, value):
-        log.info("write_byte_data: i2c_addr=%s register=%s value=%s", i2c_addr, register, value)
+        log.debug("write_byte_data: i2c_addr=%s register=%s value=%s", i2c_addr, register, value)
 
     def read_word_data(self, i2c_addr, register):
-        log.info("read_word_data: i2c_addr=%s register=%s", i2c_addr, register)
+        log.debug("read_word_data: i2c_addr=%s register=%s", i2c_addr, register)
         return 10
 
     def __repr__(self):

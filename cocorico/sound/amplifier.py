@@ -12,11 +12,11 @@ class Amplifier:
         self.disable()
 
     def enable(self):
-        log.info("Enable amplifier")
+        log.debug("Enable amplifier")
         GPIO.setup(self.SHUTDOWN_PIN, GPIO.IN)  # High impedance (pullup on 5v on amp board)
 
     def disable(self):
-        log.info("Disable amplifier")
+        log.debug("Disable amplifier")
         GPIO.setup(self.SHUTDOWN_PIN, GPIO.OUT, initial=GPIO.LOW)  # Force low
 
     def close(self):
