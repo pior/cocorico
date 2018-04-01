@@ -3,6 +3,9 @@ import threading
 import time
 
 from cocorico.hal.gpio import GPIO
+from cocorico.hal import is_dev
+from .mock import MockButton
+
 
 log = logging.getLogger(__name__)
 
@@ -21,6 +24,8 @@ class Button:
     def __init__(self, pin, callback):
         self._pin = pin
         self._callback = callback
+        if is_dev:
+            MockButton(callback)
 
         GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
         GPIO.add_event_detect(pin, GPIO.FALLING, callback=self._gpio_callback, bouncetime=50)
