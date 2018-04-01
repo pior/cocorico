@@ -23,7 +23,7 @@ class Sound:
         self._start('startup.wav')
 
     def play_alarm(self):
-        self._start('cuckoo.wav')
+        self._start('birds1-mono.wav')
 
     def set_alarm(self):
         if not self._in_alarm:
