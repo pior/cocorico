@@ -54,8 +54,7 @@ class App():
         self.sound.refresh()
         self.ui_refresh()
 
-        lux = self.lux.read()
-        log.info("Lux = %s", lux)
+        log.info("%s", self.lux)
 
     def ui_refresh(self):
         state = self.state.get()
