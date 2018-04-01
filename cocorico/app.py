@@ -70,8 +70,12 @@ class App():
                 self.display.show()
 
         elif state == State.ALARM:
+            rampup = self.alarm.rampup_position
+            log.info("Alarm rampup = %s", rampup)
+
             self.display.as_clock(self.clock.time, '>>> REVEIL! <<<')
-            self.sound.set_alarm()
+            if rampup > 0.50:
+                self.sound.set_alarm()
             self.light.set_alarm()
             self.display.show()
 

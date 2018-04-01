@@ -34,10 +34,16 @@ class Alarm:
         if not self._settings.active:
             self._triggered = False
         elif not self._triggered:
-            et = self.effective_time
-            if self._clock.now > et:
+            if self._clock.now > self.effective_time:
                 self._triggered = True
         return self._triggered
+
+    @property
+    def rampup_position(self, rampup_time=300):
+        if not self.triggered:
+            return
+        elapsed = self._clock.now - self.effective_time
+        return min(1, elapsed.total_seconds() / rampup_time)
 
     def ack(self):
         self._ack_time = self._clock.now
