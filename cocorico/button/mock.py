@@ -21,7 +21,7 @@ class MockButton:
 
 
 class MockButtons:
-    _keys_available = list(b'qwertyuiop')
+    _keys_available = list(b'qwertyuiop' * 100)
     _callback_map = {}
 
     def __init__(self):
