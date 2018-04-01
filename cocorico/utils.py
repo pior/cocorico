@@ -7,9 +7,13 @@ class PeriodicTask(threading.Thread):
         super().__init__()
         self._func = func
         self._period = period
+        self._stopping = threading.Event()
         self.setDaemon(1)
 
     def run(self):
-        while self._func:
+        while not self._stopping.is_set():
             self._func()
-            time.sleep(self._period)
+            self._stopping.wait(timeout=self._period)
+
+    def stop(self):
+        self._stopping.set()

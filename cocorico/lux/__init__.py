@@ -7,7 +7,12 @@ class Lux:
     def __init__(self):
         self._sensor = Tsl2591(SMBus(1))
         self._setvalue(0)
-        PeriodicTask(0.5, self._poll).start()
+        self._thread = PeriodicTask(0.5, self._poll)
+        self._thread.start()
+
+    def close(self):
+        self._thread.stop()
+        self._thread.join()
 
     def _poll(self):
         self._setvalue(self._sensor.measure_lux())

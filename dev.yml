@@ -10,4 +10,4 @@ commands:
     run: pytest -s && ((git add cocorico fonts sounds && git add -u && git commit -m 'autopush'); git push resin)
 
   test:
-    run: pytest -v tests
+    run: pytest -s -v tests

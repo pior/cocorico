@@ -38,6 +38,7 @@ class App():
         self.sound.close()
         self.light.close()
         self.display.close()
+        self.lux.close()
 
     def initialize(self):
         self.light.off()
@@ -46,15 +47,15 @@ class App():
     def routine(self, time_previous, time_now):
         if self.alarm.triggered:
             log.info('Triggered!')
-            self.state.set_alarm()
+            self.state.set_alarm(progression=self.alarm.get_progression())
 
         self.sound.refresh()
         self.refresh()
         log.info("%s", self.lux)
 
     def refresh(self):
-        state = self.state.get()
-        log.info('State = %s', state)
+        state, progression = self.state.get()
+        log.info('state=%s progression=%s', state, progression)
 
         if state == State.STANDBY:
             text = ''
@@ -70,11 +71,8 @@ class App():
                 self.display.show()
 
         elif state == State.ALARM:
-            rampup = self.alarm.rampup_position
-            log.info("Alarm rampup = %s", rampup)
-
             self.display.as_clock(self.clock.time, '>>> REVEIL! <<<')
-            if rampup > 0.50:
+            if progression > 0.50:
                 self.sound.set_alarm()
             self.light.set_alarm()
             self.display.show()

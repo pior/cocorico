@@ -39,8 +39,7 @@ class Alarm:
                 self._trigger_time = now
         return self._trigger_time is not None
 
-    @property
-    def rampup_position(self, rampup_time=300):
+    def get_progression(self, rampup_time=300):
         if self._trigger_time is None:
             return
         since_trigger = self._clock.now - self._trigger_time
