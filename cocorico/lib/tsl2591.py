@@ -13,6 +13,9 @@ http://ams.com/eng/Products/Light-Sensors/Light-to-Digital-Sensors/TSL25911
 
 '''
 import time
+import logging
+
+log = logging.getLogger(__name__)
 
 VISIBLE = 2  # channel 0 - channel 1
 INFRARED = 1  # channel 1
@@ -60,19 +63,19 @@ GAIN_HIGH = 0x20  # medium gain (428x)
 GAIN_MAX = 0x30  # max gain (9876x)
 
 INTEGRATIONTIME_TO_MS = {
-    INTEGRATIONTIME_100MS: 100.,
-    INTEGRATIONTIME_200MS: 200.,
-    INTEGRATIONTIME_300MS: 300.,
-    INTEGRATIONTIME_400MS: 400.,
-    INTEGRATIONTIME_500MS: 500.,
-    INTEGRATIONTIME_600MS: 600.,
+    INTEGRATIONTIME_100MS: 100,
+    INTEGRATIONTIME_200MS: 200,
+    INTEGRATIONTIME_300MS: 300,
+    INTEGRATIONTIME_400MS: 400,
+    INTEGRATIONTIME_500MS: 500,
+    INTEGRATIONTIME_600MS: 600,
 }
 
 GAIN_TO_VALUE = {
-    GAIN_LOW: 1.,
-    GAIN_MED: 25.,
-    GAIN_HIGH: 428.,
-    GAIN_MAX: 9876.,
+    GAIN_LOW: 1,
+    GAIN_MED: 25,
+    GAIN_HIGH: 428,
+    GAIN_MAX: 9876,
 }
 
 
@@ -103,10 +106,14 @@ class Tsl2591(object):
             log.error("overflow!")
             return 10000  # Some big value is less wrong than zero
 
-        atime = INTEGRATIONTIME_TO_MS.get(self._integration_time, 100)
-        again = GAIN_TO_VALUE.get(self._gain, 1.0)
+        log.info("ch0=%s ch1=%s", ch0, ch1)
 
-        cpl = (atime * again) / LUX_DF
+        integration_time = INTEGRATIONTIME_TO_MS.get(self._integration_time, 100)
+        gain = GAIN_TO_VALUE.get(self._gain, 1)
+        log.info("integration_time=%s gain=%s", integration_time, gain)
+
+        cpl = float(integration_time) * float(gain) / LUX_DF
+        log.info("cpl=%s", cpl)
 
         # lux1 = (full - (LUX_COEFB * ir)) / cpl
         # lux2 = ((LUX_COEFC * full) - (LUX_COEFD * ir)) / cpl
