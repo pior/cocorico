@@ -21,7 +21,7 @@ class App():
         self.light = Light()
         self.lux = Lux()
 
-        self.state = State()
+        self.ui_state = State()
         self.clock = Clock()
         self.alarm_settings = AlarmSettings()
         self.alarm = Alarm(clock=self.clock, settings=self.alarm_settings)
@@ -49,7 +49,7 @@ class App():
 
         if self.alarm.triggered:
             log.info('Triggered!')
-            self.state.set_alarm()
+            self.ui_state.set_alarm()
 
         self.sound.refresh()
         self.ui_refresh()
@@ -57,7 +57,7 @@ class App():
         log.info("%s", self.lux)
 
     def ui_refresh(self):
-        state = self.state.get()
+        state = self.ui_state.get()
         log.info('State = %s', state)
 
         if state == State.CLOCK:  # STANDBY
@@ -69,6 +69,10 @@ class App():
             self.display.as_clock(self.clock.time, text)
             self.light.unset_alarm()
             self.sound.unset_alarm()
+            if self.lux.is_dark:
+                self.display.hide()
+            else:
+                self.display.show()
 
         elif state == State.ALARM:
             self.display.as_clock(self.clock.time, ' /!\ ALARM /!\\')
@@ -83,40 +87,40 @@ class App():
 
     def do_alarm_ack(self):
         self.alarm.ack()
-        self.state.set_clock()
+        self.ui_state.set_clock()
         self.ui_refresh()
 
     def action_up(self):
-        if self.state.is_alarm():
+        if self.ui_state.is_alarm():
             self.do_alarm_ack()
             return
         self.alarm_settings.up()
         self.alarm_settings.set()
-        self.state.set_alarm_time()
+        self.ui_state.set_alarm_time()
         self.ui_refresh()
 
     def action_down(self):
-        if self.state.is_alarm():
+        if self.ui_state.is_alarm():
             self.do_alarm_ack()
             return
         self.alarm_settings.down()
         self.alarm_settings.set()
-        self.state.set_alarm_time()
+        self.ui_state.set_alarm_time()
         self.ui_refresh()
 
     def action_onoff(self):
-        if self.state.is_alarm():
+        if self.ui_state.is_alarm():
             self.do_alarm_ack()
             return
         self.alarm_settings.toggle()
         self.ui_refresh()
 
     def action_stop(self):
-        if self.state.is_alarm():
+        if self.ui_state.is_alarm():
             self.do_alarm_ack()
             return
 
     def action_snooze(self):
-        if self.state.is_alarm():
+        if self.ui_state.is_alarm():
             self.do_alarm_ack()
             return

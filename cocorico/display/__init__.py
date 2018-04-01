@@ -35,5 +35,11 @@ class Display:
             draw.text((0, 0), text, font=self._clock_font, fill="white")
             draw.text((0, 42), subtext, font=self._text_font, fill="white")
 
+    def show(self):
+        self._device.show()
+
+    def hide(self):
+        self._device.hide()
+
     def close(self):
         self._device.clear()
