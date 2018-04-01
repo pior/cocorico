@@ -8,8 +8,6 @@ log = logging.getLogger(__name__)
 
 
 class Sound:
-    ALARM_FILE = 'cuckoo.wav'
-    STARTUP_FILE = 'hello-man.wav'
 
     def __init__(self):
         self._amplifier = Amplifier()
@@ -22,12 +20,15 @@ class Sound:
         self._engine.close()
 
     def play_startup(self):
-        self._start(self.STARTUP_FILE)
+        self._start('startup.wav')
+
+    def play_alarm(self):
+        self._start('cuckoo.wav')
 
     def set_alarm(self):
         if not self._in_alarm:
             self._in_alarm = True
-            self._start(self.ALARM_FILE)
+            self.play_alarm()
 
     def unset_alarm(self):
         if self._in_alarm:
@@ -37,7 +38,7 @@ class Sound:
     def refresh(self):
         if self._in_alarm:
             if not self._engine.is_playing():
-                self._start(self.ALARM_FILE)
+                self.play_alarm()
         else:
             if not self._engine.is_playing():
                 self.stop()
