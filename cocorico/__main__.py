@@ -42,4 +42,5 @@ def run(app):
         time.sleep(delta.total_seconds())
 
 
-main()
+if __name__ == '__main__':
+    main()
