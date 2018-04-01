@@ -55,7 +55,7 @@ class App():
 
     def refresh(self):
         state, progression = self.state.get()
-        log.info('state=%s progression=%s', state, progression)
+        log.info('state=%s progression=%.3f', state, progression)
 
         if state == State.STANDBY:
             text = ''

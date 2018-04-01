@@ -23,4 +23,4 @@ class Lux:
         self.is_lighted = lux > 5
 
     def __repr__(self):
-        return f'<Lux lux={self.lux} is_dark={self.is_dark} is_lighted={self.is_lighted}>'
+        return '<Lux lux=%.3f is_dark=%s is_lighted=%s>' % (self.lux, self.is_dark, self.is_lighted)
