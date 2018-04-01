@@ -77,7 +77,11 @@ class App():
             self.display.show()
 
         elif state == State.ALARM_TIME:
-            self.display.as_clock(self.alarm_settings.time, 'REGLAGE')
+            if self.alarm_settings.active:
+                text = 'Reglage      ON'
+            else:
+                text = 'Reglage     OFF'
+            self.display.as_clock(self.alarm_settings.time, text)
             self.display.show()
 
         else:
