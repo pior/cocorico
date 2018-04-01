@@ -8,10 +8,10 @@ class State:
 
     def __init__(self):
         self._state = self.STANDBY
-        self._state_progression = self.STANDBY
+        self._state_progression = 1
         self._until = None
 
-    def _set(self, state, seconds=None, progression=None):
+    def _set(self, state, seconds=None, progression=1):
         self._state = state
         self._state_progression = progression
         self._until = (time.time() + seconds) if seconds else None
