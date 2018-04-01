@@ -26,7 +26,7 @@ class RGBLeds:
             for pixel in self._pixel_buffer
             for byte in color_to_lpd8806(pixel)
         ]
-        data += [0x00] * 3  # Commit sequecnce: words with MSB cleared
+        data += [0x00] * 3  # Commit sequence: words with MSB cleared
         self._spi.xfer(data)
 
     def set_all(self, color):
