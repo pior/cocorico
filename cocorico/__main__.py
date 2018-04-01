@@ -28,14 +28,18 @@ def main():
 def run(app):
     clock = Clock()
 
-    time_previous = None
+    time_previous = clock.now
+
+    app.initialize()
+
     while True:
         time_now = clock.now
         app.routine(time_previous, time_now)
 
         time_previous = time_now
 
-        time.sleep(1)  # There MUST be a better way 😏
+        td = clock.now + datetime.timedelta(seconds=1) - time_previous
+        time.sleep(td.total_seconds())
 
 
 main()

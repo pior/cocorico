@@ -39,14 +39,11 @@ class App():
         self.light.close()
         self.display.close()
 
+    def initialize(self):
+        self.light.off()
+        self.sound.play_startup()
+
     def routine(self, time_previous, time_now):
-        """Called each second to refresh the application state."""
-
-        if time_previous is None:
-            self.light.off()
-            self.sound.play_startup()
-            return
-
         if self.alarm.triggered:
             log.info('Triggered!')
             self.state.set_alarm()
@@ -63,7 +60,7 @@ class App():
         if state == State.CLOCK:  # STANDBY
             text = ''
             if self.alarm_settings.active:
-                text = '      %s' % self.alarm_settings.time.strftime('%H:%M')
+                text = '     %s' % self.alarm_settings.time.strftime('%H:%M')
 
             self.display.as_clock(self.clock.time, text)
             self.light.unset_alarm()
@@ -74,13 +71,13 @@ class App():
                 self.display.show()
 
         elif state == State.ALARM:
-            self.display.as_clock(self.clock.time, '>>>  ALARM  <<<')
+            self.display.as_clock(self.clock.time, '>>> REVEIL! <<<')
             self.sound.set_alarm()
             self.light.set_alarm()
             self.display.show()
 
         elif state == State.ALARM_TIME:
-            self.display.as_clock(self.alarm_settings.time, 'SET TIME')
+            self.display.as_clock(self.alarm_settings.time, 'REGLAGE')
             self.display.show()
 
         else:
