@@ -61,11 +61,10 @@ class App():
         log.info('State = %s', state)
 
         if state == State.CLOCK:  # STANDBY
+            text = ''
             if self.alarm_settings.active:
-                alarm_time = self.alarm_settings.time.strftime('%H:%M')
-                text = '     %s' % alarm_time
-            else:
-                text = ''
+                text = '      %s' % self.alarm_settings.time.strftime('%H:%M')
+
             self.display.as_clock(self.clock.time, text)
             self.light.unset_alarm()
             self.sound.unset_alarm()
@@ -115,6 +114,7 @@ class App():
             self.do_alarm_ack()
             return
         self.alarm_settings.toggle()
+        self.state.set_alarm_time()
         self.refresh()
 
     def action_stop(self):
