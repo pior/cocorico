@@ -17,6 +17,7 @@ class Light:
     def set_alarm(self, progression):
         brightness = min(1, progression * 2)
         self._leds.set_white(4000, brightness)
+        self._leds.refresh()
 
     def unset_alarm(self):
         self.off()
